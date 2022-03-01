@@ -1,0 +1,130 @@
+{% extends "layout.html" %}
+{% block body %}
+<!-- BreadCrumb start -->
+<section class="breadcrumb-area">
+    <div class="breadcrumb-widget  pt-145 pb-125" style="background-image: url(../static/img/breadcrumb/bg-2.png);">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="breadcrumb-content pt-170">
+                        <h1>Update proposal</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+<!-- BreadCrumb end -->
+
+<section class="pt-140 pb-140 get-touch-area bg_white">
+    <div class="container">
+        <div class="row gy-4 gy-lg-0">
+            <div class="col-lg-12">
+            <div class="contact-form-widget">
+
+            <div>
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <div>
+                            <h4 class="job-title">{{ proposal.its_job.title }}</h4>
+                            <div class="d-flex flex-wrap">
+                                <div class="job-location me-3"> <i class="icon_pin_alt"></i>{{ proposal.its_job.location.name }}
+                                </div>
+                                <div class="job-catagory"> <span>{{ proposal.its_job.category.categoryname }}</span> | {{ proposal.its_job.schedule.schedulename }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <form action="" method="POST">
+                            {{ form.hidden_tag() }}
+                            <div class="row gy-4 mt-4">
+                                <div class="col-md-6">
+                                <label class="label" for="firstname">First Name<span>*</span></label>
+                                {% if form.firstname.errors %}
+                                {{ form.firstname(class="form-control form-control-lg is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.firstname.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                                {% else %}
+                                    {{ form.firstname(class="form-control form-control-lg") }}
+                                {% endif %}
+                                </div>
+
+                                <div class="col-md-6">
+                                <label class="label" for="lastname">Last Name<span>*</span></label>
+                                {% if form.lastname.errors %}
+                                {{ form.lastname(class="form-control form-control-lg is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.lastname.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                                {% else %}
+                                    {{ form.lastname(class="form-control form-control-lg") }}
+                                {% endif %}
+                                </div>
+
+                                <div class="col-md-6">
+                                <label class="label" for="email">Email</label>
+                                {% if form.email.errors %}
+                                {{ form.email(class="form-control form-control-lg is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.email.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                                {% else %}
+                                    {{ form.email(class="form-control form-control-lg") }}
+                                {% endif %}
+                                </div>
+                                <div class="col-md-6">
+                                <label class="label" for="phone">Phone Number<span>*</span></label>
+                                {% if form.phone.errors %}
+                                {{ form.phone(class="form-control form-control-lg is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.phone.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                                {% else %}
+                                    {{ form.phone(class="form-control form-control-lg") }}
+                                {% endif %}
+                                </div>
+
+                                <div class="col-12">
+                                <label class="label" for="message">Message to the recruiter:</label>
+                                {% if form.message.errors %}
+                                {{ form.message(class="form-control form-control-lg is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.message.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                                {% else %}
+                                    {{ form.message(class="form-control form-control-lg") }}
+                                {% endif %}
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="d-flex justify-content-between">
+                                        {{ form.submit(class="btn btn-primary") }}
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

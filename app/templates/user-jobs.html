@@ -1,0 +1,113 @@
+{% extends "layout.html" %} {% block body %}
+<!-- BreadCrumb start -->
+<section class="breadcrumb-area">
+  <div
+    class="breadcrumb-widget pt-145 pb-125"
+    style="background-image: url(https://images.pexels.com/photos/5905923/pexels-photo-5905923.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940)"
+  >
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="breadcrumb-content pt-170">
+            <h1>My posted jobs</h1>
+            <p class="text-light"><a target="_blank"
+              href="https://images.pexels.com/photos/5905923/pexels-photo-5905923.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940">
+              Photo by Katerina Holmes from Pexels
+              <i class="fa fa-link"></i>
+              </a>
+          </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- BreadCrumb end -->
+{% if not jobs %}
+<div class="jumbotron">
+<h3>You have not posted any job yet</h3>
+</div>
+{% endif %}
+
+<div style="width: 100%;" class="mt-3 mb-5 ml-2 mr-2">
+    <div class="d-flex justify-content-center row">
+    <div>
+    <div class="rounded">
+    <div class="table-responsive table-borderless">
+    <table class="table">
+    <thead>
+    <tr>
+    <th></th>
+    <th>Id #</th>
+    <th>Job Name</th>
+    <th>Status</th>
+    <th>Created</th>
+    <th></th>
+    </tr>
+    </thead>
+    <tbody class="table-body">
+    
+    {% for job in jobs %}
+    <tr class="cell-1">
+    <td class="text-center">
+    <form action="{{ url_for('togglejob', id=job.id) }}" method="POST">
+    <button type="submit">
+    {% if job.active == True %}
+    <div class="toggle-btn active">
+    <div class="inner-circle"></div>
+    </div>
+    {% else %}
+    <div class="toggle-btn inactive">
+      <div class="inner-circle"></div>
+    </div>
+    {% endif %}
+    </button>
+    </form>
+    </td>
+    <td>#{{ job.id }}</td>
+    <td>{{ job.title }}</td>
+    {% if job.active == True %}
+    <td><span class="badge badge-success">Active</span></td>
+    {% else %}
+    <td><span class="badge badge-danger">Inactive</span></td>
+    {% endif %}
+    <td>{{ job.date_posted.strftime('%d-%m-%Y') }}</td>
+
+    <td>
+      <div class="dropdown">
+        <button class="btn dropdown-toggle" type="button" data-toggle="dropdown">
+        </button>
+        <ul class="dropdown-menu">
+          <li><a class="btn" href="{{ url_for('jobupdate', id=job.id) }}">Update</a></li>
+          <li>
+            <button class="btn" id="myBtn">Delete</button>
+          </li>
+          <li><a class="btn" href="{{ url_for('submitted_proposals', id=job.id) }}">View all proposals</a></li>
+        </ul>
+      </div>
+    </td>
+    </tr>
+
+    <!-- modal -->
+    <div id="myModal" class="delete-modal">
+
+      <div class="delete-modal-content">
+        <span class="delete-closemodal">&times;</span>
+        <p>Are you sure you want to delete the job post?</p>
+        <form action="{{ url_for('deletejob', id=job.id) }}" method="post">
+            <button type="submit" class="btn btn-danger">Delete</button>
+        </form>
+      </div>
+
+    </div>
+
+    {% endfor %}
+    </tbody>
+    </table>
+    </div>
+    </div>
+    </div>
+    </div>
+</div> 
+
+{% endblock body %}

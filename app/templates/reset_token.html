@@ -1,0 +1,65 @@
+{% extends "layout.html" %}
+{% block body %}
+<!-- BreadCrumb start -->
+<section class="breadcrumb-area">
+    <div class="breadcrumb-widget  pt-145 pb-125" style="background-image: url(../static/img/breadcrumb/bg-2.png);">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="breadcrumb-content pt-170">
+                        <h1>Reset password</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+<!-- BreadCrumb end -->
+
+<section class="pt-140 pb-140 get-touch-area bg_white">
+    <div class="container">
+        <div class="row gy-4 gy-lg-0">
+            <div class="col-lg-12">
+                <div class="contact-form-widget">
+    <form action="" method="POST">
+        {{ form.hidden_tag() }}
+        <div class="row">
+            <div class="section-title text-start">
+               <h2>Reset Password</h2>
+            </div>
+               <div class="col-md-12 mt-20">
+                {{ form.password.label(class="form-control-label") }}
+                {% if form.password.errors %}
+                {{ form.password(class="form-control form-control-lg is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in form.password.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+                {% else %}
+                    {{ form.password(class="form-control form-control-lg") }}
+                {% endif %}
+            </div>
+            <div class="col-md-12 mt-20">
+                {{ form.confirm_password.label(class="form-control-label") }}
+                {% if form.confirm_password.errors %}
+                {{ form.confirm_password(class="form-control form-control-lg is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in form.confirm_password.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+                {% else %}
+                    {{ form.confirm_password(class="form-control form-control-lg") }}
+                {% endif %}
+            </div>
+    
+            <div class="col-md-12 mt-20">
+                {{ form.submit(class="btn btn-lg btn-primary") }}
+            </div>
+        </div>
+    </form>
+
+
+{% endblock %}

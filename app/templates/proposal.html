@@ -1,0 +1,113 @@
+{% extends "layout.html" %}
+{% block body %}
+<!-- BreadCrumb start -->
+<section class="breadcrumb-area">
+    <div class="breadcrumb-widget  pt-145 pb-125" style="background-image: url(../static/img/breadcrumb/bg-2.png);">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="breadcrumb-content pt-170">
+                        <h1>Job proposal</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+<!-- BreadCrumb end -->
+
+<section class="pt-140 pb-140 get-touch-area bg_white">
+    <div class="container">
+        <div class="row gy-4 gy-lg-0">
+            <div class="col-lg-12">
+                <div class="contact-form-widget">
+
+                    <div class="job-post-widget">
+                    <div class="single-job-post me-1 wow fadeInUp mt-25">
+                        <div class="post-header">
+                            <div>
+                                {% if proposal.its_job.active == True %}
+                                <h4><span class="badge badge-success">Job active</span></h4>
+                                {% else %}
+                                <h4><span class="badge badge-danger">Job closed</span></h4>
+                                {% endif %}
+                                <h6 class="job-title"><a href="{{ url_for('job',id=proposal.its_job.id) }}">{{ proposal.its_job.title }}</a> </h6>
+                                <div class="d-flex flex-wrap">
+                                    <div class="job-location me-lg-3 me-2"> <i class="icon_pin_alt"></i>{{ proposal.its_job.location.name }}
+                                    </div>
+                                    <div class="job-catagory"> <span>{{ proposal.its_job.category.categoryname }}</span> | {{ proposal.its_job.schedule.schedulename }}
+                                    </div>
+                                </div>
+                           </div>
+                           <div class="timestamp">
+                               Proposal initiated
+                            {{ proposal.date_initiated.strftime('%d-%m-%Y') }}
+                            </div>
+                        </div>
+                        <div class="post-content">
+                            <h5>Details</h5>
+                            <p class="mb-1"><span style="font-weight: bold;">First Name:</span> {{ proposal.firstname }}</p>
+                            <p class="mb-1"><span style="font-weight: bold;">Last Name:</span> {{ proposal.lastname }}</p>
+                            <p class="mb-1"><span style="font-weight: bold;">Email:</span> {{ proposal.email }}</p>
+                            <p class="mb-1"><span style="font-weight: bold;">Phone Number:</span> {{ proposal.phone }}</p>
+                            <p style="font-weight: bold;">Message to the recruiter</p>
+                            <p><pre>{{ proposal.message }}</pre></p>
+                        </div>
+                        <div class="post-content">
+                            <h5>Documents</h5>
+                            {% if not proposal.docs %}
+                            <div class="jumbotron">
+                                <p>Provide any other documents below</p>
+                            </div>
+                            {% endif %}
+                            {% for doc in proposal.docs %}
+                            <p style="color: #007bff;"><a target="_blank" href="{{ url_for('uploaded_file', filename = doc.docname) }}">{{ doc.docname }}</a></p>
+                            {% endfor %}
+                            
+
+                            <div class="mt-3">
+                                <label class="label mb-0">Attach Your resume or documents here(Optional)</label>
+                                <p class="support mb-2">Files Supported : ( .png, .jpeg, .jpg, .gif, .pdf, .txt. Max size
+                                    10MB)
+                                </p>
+
+                                <div id="dropzone" class="dropzone">
+                                    <div class="dz-message">
+                                        <img src="{{url_for('static', filename = 'img/icon_upload.svg') }}" alt="upload">
+                                        <h4 class="dz-button">Drag and Drop files here</h4>
+                                        <p class="dz-custom-upload-text">or browse to</p>
+                                        <div class="theme-btn theme-btn-primary_alt mt-3">Choose File</div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+                        <div class="post-content">
+                            <a href="{{ url_for('update_proposal', id=proposal.id) }}"><i class="fa fa-pen"></i></a>
+                            <i id="myBtn" class="fa fa-trash btn"></i>
+                        </div>
+                    </div>
+                    </div>
+
+                    <!-- modal -->
+                    <div id="myModal" class="delete-modal">
+
+                        <div class="delete-modal-content">
+                        <span class="delete-closemodal">&times;</span>
+                        <p>Are you sure you want to delete the job proposal?</p>
+                        <form action="{{ url_for('delete_proposal', id = proposal.id) }}" method="post">
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                        </div>
+                
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

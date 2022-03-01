@@ -1,0 +1,204 @@
+{% extends "layout.html" %}
+{% block body %}
+        <!-- BreadCrumb start -->
+        <section class="breadcrumb-area">
+            <div class="breadcrumb-widget  pt-145 pb-125" style="background-image: url(https://images.pexels.com/photos/8486978/pexels-photo-8486978.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940);">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="breadcrumb-content pt-170">
+                                <h1>Hi there,</h1>
+                                <h1>{{ current_user.username }}</h1>
+                                <p class="text-light"><a target="_blank"
+                                    href="https://images.pexels.com/photos/8486978/pexels-photo-8486978.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940">
+                                    Photo by Kindel Media from Pexels
+                                    <i class="fa fa-link"></i>
+                                    </a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+        <!-- BreadCrumb end -->
+
+        <!-- Job posts start -->
+        <section class="pt-110 pb-130 bg_disable">
+            <div class="container">
+                <div class="row">
+                    <!-- left side bar -->
+                    <div class="col-lg-4  pr-lg-55">
+                        <div class="left-sidebar-widget">
+                            <div class="sidebar-header">
+                                <div class="sidebar-title">
+                                    <h4>Search for jobs</h4>
+                                </div>
+                            </div>
+                            <div class="single-sidebar-widget mt-35 widget-shadow">
+                                <div class="input-search-field input-group">
+                                    <input type="text" class="form-control" placeholder="Job title or keywords...">
+                                    <div class="input-group-append">
+                                        <button class="btn"><i class="icon_search"></i></button>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="single-sidebar-widget mt-30 widget-shadow">
+                                <div class="widget-title">
+                                    <h5>County</h5>
+                                </div>
+                                <div class="select-location">
+                                    <span class="arrow-icon"><i class="arrow_carrot-down"></i></span>
+                                    <select id="locationSelect" class="form-control">
+                                        {% for c in counties %}
+                                        {% if c == county %}
+                                        <option value="{{ c.name }}" selected>{{ c.name }}</option>
+                                        {% else %}
+                                        <option value="{{ c.name }}">{{ c.name }}</option>
+                                        {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+
+
+                            <div class="single-sidebar-widget mt-60 widget-border">
+                                <div class="catagory-list-widget">
+                                    <div class="widget-title">
+                                        <h5>Job Category</h5>
+                                    </div>
+                                    <div class="widget-content ">
+
+                                        <ul class="catagory-list py-3">
+                                            <li class="catagory-item ">
+                                                <a href="#" class="catagory-link">
+                                                    <span class="text">All Categories</span>
+                                                    <span class="number">({{ categories.total }})</span>
+                                                </a>
+                                            </li>
+                                            {% for c in categories.items %}
+                                            {% if c == category %}
+                                            <li class="catagory-item">
+                                                <span class="catagory-link active">
+                                                    <span id="active-category" class="text categoryBtn">{{ c.categoryname }}</span>
+                                                </span>
+                                            </li>
+                                            {% else %}
+                                            <li class="catagory-item">
+                                                <span class="catagory-link">
+                                                    <span class="text categoryBtn">{{ c.categoryname }}</span>
+                                                </span>
+                                            </li>
+                                            {% endif %}
+                                            {% endfor %}
+                                        </ul>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="single-sidebar-widget mt-60 widget-border">
+                                <div class="widget-title">
+                                    <h5>Job Schedule</h5>
+                                </div>
+                                <div class="widget-content pt-20 pb-20 pr-20 pl-20">
+                                    <div class="form-check form-check-inline mr-30">
+                                        {% for schedule in schedules %}
+                                        {% if schedule == jobschedule %}
+                                        <input class="form-check-input radiobtns" type="radio" name="schedule"
+                                            id="{{ schedule.schedulename }}" value="{{ schedule.schedulename }}" checked>
+                                        
+                                        <label class="form-check-label" for="{{ schedule.schedulename }}">{{ schedule.schedulename }}</label>
+                                        <br>
+                                        {% else %}
+                                        <input class="form-check-input radiobtns" type="radio" name="schedule"
+                                            id="{{ schedule.schedulename }}" value="{{ schedule.schedulename }}">
+                                        
+                                        <label class="form-check-label" for="{{ schedule.schedulename }}">{{ schedule.schedulename }}</label>
+                                        <br>
+                                        {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right bar -->
+                    <div class="col-lg-8">
+                        <div class="job-post-widget">
+                            <div class="sidebar-header d-flex justify-content-between align-items-center mt-4 mt-lg-0">
+                                <div class="sidebar-title">
+                                    <h4 class="wow fadeInRight">{{ jobs.total }} job(s) you might like</h4>
+                                </div>
+
+                                <div class="sorting-select wow fadeInLeft me-1">
+                                    <select id="sort-select">
+                                        <option value="SortBy Newest" selected>SortBy Newest</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            {% for job in jobs.items %}
+                            {% if job.active == True %}
+                            <div class="single-job-post me-1 wow fadeInUp mt-25">
+                                <div class="post-header">
+                                    <div>
+                                        <h6 class="job-title"><a href="{{ url_for('job', id=job.id) }}">{{ job.title }}</a> </h6>
+                                        <div class="d-flex flex-wrap">
+                                            <div class="job-location me-lg-3 me-2"> <i class="icon_pin_alt"></i>{{ job.location.name }}
+                                            </div>
+                                            <div class="job-catagory"> <span>{{ job.category.categoryname }}</span> | {{ job.schedule.schedulename }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="timestamp">
+                                        {{ job.date_posted.strftime('%d-%m-%Y') }}
+                                    </div>
+                                </div>
+                                <div class="post-content">
+                                    <p>{{ job.job_responsibilities }}</p>
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% endfor %}
+                            {% for page_num in jobs.iter_pages(left_edge=1,right_edge=1,left_current=1,right_current=2) %}
+                                {% if page_num %}
+                                    {% if jobs.page == page_num %}
+                                    <button class="btn btn-primary mb-2 mt-3 active-page">{{ page_num }}</button>
+                                    {% else %}
+                                    <button class="btn btn-outline-primary mb-2 mt-3">{{ page_num }}</button>
+                                    {% endif %}
+                                {% else %}
+                                    ...
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+
+                        <div class="email-alert-widget bg_white mt-100 wow fadeInUp">
+                            <h4>Get email alerts for the latest Jobs in Kenya</h4>
+                            <p>You can cancel email alerts at any time.</p>
+
+
+                            <div class="input-group mt-40">
+                                <input type="text" class="form-control" placeholder="Type in your email...">
+                                <div class="input-group-append">
+                                    <a href="#" class="theme-btn theme-btn-lg">Set Up Alert</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    
+                </div>
+            </div>
+        </section>
+        <!-- Job posts end -->
+
+        <!-- snackbar -->
+        <div id="snackbar">{{ message }}</div>
+
+{% endblock body %}

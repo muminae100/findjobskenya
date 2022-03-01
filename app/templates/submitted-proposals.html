@@ -1,0 +1,67 @@
+{% extends "layout.html" %}
+{% block body %}
+<!-- BreadCrumb start -->
+<section class="breadcrumb-area">
+    <div class="breadcrumb-widget  pt-145 pb-125" style="background-image: url(../static/img/breadcrumb/bg-2.png);">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="breadcrumb-content pt-170">
+                        <h1>Proposals for {{ job.title }}</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+<!-- BreadCrumb end -->
+
+<section class="pt-140 pb-140 get-touch-area bg_white">
+    <div class="container">
+        <div class="row gy-4 gy-lg-0">
+            <div class="col-lg-12">
+                <div class="contact-form-widget">
+                    {% if not job.proposals %}
+                    <div class="jumbotron">
+                        <h3>No proposals submitted yet</h3>
+                    </div>
+                    {% endif %}
+
+                    {% for proposal in job.proposals %}
+                    <div class="job-post-widget">
+                    <div class="single-job-post me-1 wow fadeInUp mt-25">
+                        <div class="post-header">
+                            <div>
+                                <h6 class="job-title"> Proposal by {{ proposal.job_seeker.username }}</h6>
+                           </div>
+                           <div class="timestamp">
+                               Proposal initiated
+                            {{ proposal.date_initiated.strftime('%d-%m-%Y') }}
+                            </div>
+                        </div>
+                        <div class="post-content">
+                            <p><span style="font-weight: bold;">First Name:</span> {{ proposal.firstname }}</p>
+                            <p><span style="font-weight: bold;">Last Name:</span> {{ proposal.lastname }}</p>
+                            <p><span style="font-weight: bold;">Email:</span> {{ proposal.email }}</p>
+                            <p><span style="font-weight: bold;">Phone Number:</span> {{ proposal.phone }}</p>
+                            <p style="font-weight: bold;">Message:</p>
+                            <pre>{{ proposal.message }}</pre>
+                            <h5>Documents</h5>
+                            {% for doc in proposal.docs %}
+                            <p style="color: #007bff;"><a target="_blank" href="{{ url_for('uploaded_file', filename = doc.docname) }}">{{ doc.docname }}</a></p>
+                            {% endfor %}
+                            <button class="btn btn-lg btn-primary mt-5">Reply</button>
+                        </div>
+                    </div>
+                    </div>
+                    {% endfor %}
+
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

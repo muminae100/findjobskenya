@@ -1,0 +1,172 @@
+{% extends "layout.html" %}
+{% block body %}
+<!-- BreadCrumb start -->
+<section class="breadcrumb-area">
+    <div class="breadcrumb-widget  pt-145 pb-125" style="background-image: url(../static/img/breadcrumb/bg-2.png);">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="breadcrumb-content pt-170">
+                        <h1>{{ text }}</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+<!-- BreadCrumb end -->
+
+<!-- start job post form -->
+<div class="container mt-5 mb-5">
+
+<div class="col-md-12">
+<div class="contact-form-widget">
+<form action="" method="POST">
+    {{ form.hidden_tag() }}
+    <div class="row">
+            <div class="section-title text-start">
+           <h2>{{ text }}</h2>
+           </div>
+           <div class="col-md-12 mt-20">
+                {{ form.title.label(class="form-control-label") }}
+                {% if form.title.errors %}
+                {{ form.title(class="form-control form-control-lg is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in form.title.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+                {% else %}
+                    {{ form.title(class="form-control form-control-lg") }}
+                {% endif %}
+            </div>
+            <div class="col-md-12 mt-20">
+                {{ form.category.label(class="form-control-label") }}
+                {% if form.category.errors %}
+                {{ form.category(class="form-control form-control-lg is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in form.category.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+                {% else %}
+                    {{ form.category(class="form-control form-control-lg") }}
+                {% endif %}
+            </div>
+            <div class="col-md-12 mt-20">
+                {{ form.schedule.label(class="form-control-label") }}
+                {% if form.schedule.errors %}
+                {{ form.schedule(class="form-control form-control-lg is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in form.schedule.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+                {% else %}
+                    {{ form.schedule(class="form-control form-control-lg") }}
+                {% endif %}
+            </div>
+            <div class="col-md-12 mt-20">
+                {{ form.responsibilities.label(class="form-control-label") }}
+                {% if form.responsibilities.errors %}
+                {{ form.responsibilities(class="form-control form-control-lg is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in form.responsibilities.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+                {% else %}
+                    {{ form.responsibilities(class="form-control form-control-lg") }}
+                {% endif %}
+            </div>
+            
+            <div class="col-md-12 mt-20">
+                {{ form.location.label(class="form-control-label") }}
+                {% if form.location.errors %}
+                {{ form.location(class="form-control form-control-lg is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in form.location.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+                {% else %}
+                    {{ form.location(class="form-control form-control-lg") }}
+                {% endif %}
+            </div>
+            <div class="col-md-12 mt-20">
+                {{ form.education.label(class="form-control-label") }}
+                {% if form.education.errors %}
+                {{ form.education(class="form-control form-control-lg is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in form.title.errors %}
+                    <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+                {% else %}
+                {{ form.education(class="form-control form-control-lg") }}
+                {% endif %}
+            </div>
+            <div class="col-md-12 mt-20">
+                {{ form.experience.label(class="form-control-label") }}
+                {% if form.experience.errors %}
+                {{ form.experience(class="form-control form-control-lg is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in form.title.errors %}
+                    <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+                {% else %}
+                {{ form.experience(class="form-control form-control-lg") }}
+                {% endif %}
+            </div>
+            <div class="col-md-12 mt-20">
+                {{ form.additionalreq.label(class="form-control-label") }}
+                {% if form.additionalreq.errors %}
+                {{ form.additionalreq(class="form-control form-control-lg is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in form.title.errors %}
+                    <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+                {% else %}
+                {{ form.additionalreq(class="form-control form-control-lg") }}
+                {% endif %}
+            </div>
+            <div class="col-md-12 mt-20">
+                {{ form.compensation.label(class="form-control-label") }}
+                {% if form.compensation.errors %}
+                {{ form.compensation(class="form-control form-control-lg is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in form.title.errors %}
+                    <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+                {% else %}
+                {{ form.compensation(class="form-control form-control-lg") }}
+                {% endif %}
+            </div>
+            <div class="col-md-12 mt-20">
+                {{ form.salary.label(class="form-control-label") }}
+                {% if form.salary.errors %}
+                {{ form.salary(class="form-control form-control-lg is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in form.title.errors %}
+                    <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+                {% else %}
+                {{ form.salary(class="form-control form-control-lg") }}
+                {% endif %}
+            </div>
+        
+        <div class="col-md-12 mt-20">
+            {{ form.submit(class="btn btn-lg btn-primary") }}
+        </div>
+    </div>
+</form>
+</div>
+
+</div>
+</div>
+{% endblock body %}

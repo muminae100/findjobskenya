@@ -1,0 +1,100 @@
+{% extends "layout.html" %}
+{% block body %}
+<!-- BreadCrumb start -->
+<section class="breadcrumb-area">
+    <div class="breadcrumb-widget  pt-145 pb-125" style="background-image: url(https://images.pexels.com/photos/3222683/pexels-photo-3222683.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940);">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="breadcrumb-content pt-170">
+                        <h1>Account</h1>
+                        <p class="text-light"><a target="_blank"
+                            href="https://images.pexels.com/photos/3222683/pexels-photo-3222683.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940">
+                            Photo by Pratikxox from Pexels
+                            <i class="fa fa-link"></i>
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+<!-- BreadCrumb end -->
+
+<!-- account start -->
+<section class="pt-140 pb-140 get-touch-area bg_white">
+    <div class="container">
+        <div class="row gy-4 gy-lg-0">
+        
+        <div class="jumbotron">
+        <p class="p-1 m-1"><b>Username:</b>  {{ current_user.username }}</p> 
+        <p class="p-1 m-1"><b>Email:</b> {{ current_user.email }}</p> 
+        <div class="p-1 m-1">
+            <a class="text-primary" href="{{ url_for('reset_request') }}">Change password</a>
+        </div>
+        <div class="p-1 m-1">
+            <a class="text-primary" href="{{ url_for('logout') }}">Logout</a>
+        </div>
+        </div>
+
+        <div class="contact-form-widget">
+            <form action="" method="POST" enctype="multipart/form-data">
+                {{ form.hidden_tag() }}
+                <div class="row">
+                    <div class="section-title text-start">
+                        <h2>Update account</h2>
+                    </div>
+                       <div class="col-md-12 mt-20">
+                            {{ form.username.label(class="form-control-label") }}
+        
+                            {% if form.username.errors %}
+                            {{ form.username(class="form-control form-control-lg is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.username.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                                {{ form.username(class="form-control form-control-lg") }}
+                            {% endif %}
+                            
+                       </div>
+                       <div class="col-md-12 mt-20">
+                            {{ form.email.label(class="form-control-label") }}
+                            {% if form.email.errors %}
+                            {{ form.email(class="form-control form-control-lg is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.email.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                                {{ form.email(class="form-control form-control-lg") }}
+                            {% endif %}
+                        </div>
+                      <div class="col-md-12 mt-20">
+                          {{ form.picture.label() }}
+                          {{ form.picture(class="form-control-file") }}
+                          {% if form.picture.errors %}
+                            {% for error in form.picture.errors %}
+                              <span class="text-danger">{{ error }}</span>
+                              <br>
+                            {% endfor %}
+                          {% endif %}
+                      </div>
+                    <div class="col-md-12 mt-20">
+                        {{ form.submit(class="btn btn-lg btn-primary") }}
+                    </div>      
+                </div>
+              </form>
+        </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- account end -->
+
+{% endblock body %}
