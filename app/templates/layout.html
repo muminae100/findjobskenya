@@ -305,7 +305,8 @@
     <!-- footer end -->
 
     <!-- Back to top button -->
-    <a id="back-to-top" title="Back to Top"></a>
+    <a id="back-to-top" title="Back to Top"></a>   
+
 
     <!-- JS here -->
     <script type="text/javascript" src="{{ url_for('static', filename = 'js/jquery-3.6.0.min.js') }}"></script>
@@ -321,7 +322,33 @@
     <script type="text/javascript" src="{{ url_for('static', filename = 'js/custom.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename = 'js/jquery-editable-select.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename = 'js/additional.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename = 'js/google.js') }}"></script>
+
+    
+    <script type="text/javascript">
+        jQuery(document).ready(function($){
+      
+    $('.live-search-list .searchable').each(function(){
+    $(this).attr('data-search-term', $(this).text().toLowerCase());
+    });
+      
+    $('.live-search-box').on('keyup', function(){
+      
+    var searchTerm = $(this).val().toLowerCase();
+      
+        $('.live-search-list .searchable').each(function(){
+      
+            if (searchTerm.length < 1 || $(this).filter('[data-search-term *= ' + searchTerm + ']').length > 0 ) {
+                $(this).show();
+            } else {
+                $(this).hide();
+            }
+      
+        });
+      
+    });
+      
+    });
+    </script> 
 </body>
 
 </html>

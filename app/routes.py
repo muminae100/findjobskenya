@@ -4,7 +4,7 @@ import secrets
 from PIL import Image
 from flask import render_template,redirect,request,url_for,flash,abort,jsonify,send_from_directory
 from app import app,db,bcrypt,mail
-from app.models import Jobs, Proposals, Users, Categories, Jobschedule, Counties, Docs
+from app.models import Jobalerts, Jobs, Proposals, Users, Categories, Jobschedule, Counties, Docs
 from flask_login import login_user,current_user,logout_user,login_required
 from app.forms import (RegistrationForm,LoginForm,UpdateAccountForm,
 PostJobForm,RequestResetForm,ResetPasswordForm,ContactForm,SubscribeForm,ProposalForm)
@@ -68,7 +68,7 @@ def register():
     form = RegistrationForm()
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        newuser = Users(email=form.email.data,username=form.username.data,password=hashed_password)
+        newuser = Users(email=form.email.data,phone_number=form.phone.data,username=form.username.data,password=hashed_password)
         db.session.add(newuser)
         db.session.commit()
 
@@ -125,6 +125,47 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 
+def send_alert_email(job, user):
+    msg = Message('Job alert', 
+                   sender='smuminaetx100@gmail.com',
+                   recipients=[user.email])
+    msg.body = f'''A new job has been posted:
+
+{job.title}
+{job.category.categoryname}
+{job.location.name}
+{job.schedule.schedulename}
+Job responsibilities:
+{job.job_responsibilities}
+Education level:
+{job.education}
+Experience:
+{job.experience}
+Additional requirements:
+{job.additional_req}
+Compensation:
+{job.compensation}
+Job Active:
+{job.active}
+Salary:
+{job.salary}
+{job.date_posted}
+Posted by 
+{job.author.username}
+Contact details:
+{job.author.email}
+{job.author.phone_number}
+
+You can view the job in our website using the link below:
+{url_for('job',id={job.id},_external = True)}
+
+'''
+    mail.send(msg)
+
+def check_alerts(j):
+    alert = Jobalerts.query.filter_by(category=j.category).filter_by(county=j.county).filter_by(schedule=j.schedule).all()
+    if alert:
+        send_alert_email(j, alert.email)
 
 
 # jobs
@@ -142,6 +183,8 @@ def newjob():
         compensation=form.compensation.data)
         db.session.add(job)
         db.session.commit()
+        j = Jobs.query.first_or_404()
+        check_alerts(j)
         flash('Your job has been posted successfully!', 'success')
         return redirect(url_for('job',id=job.id))
     return render_template('newjob.html', title = 'Post new job',form=form, text = 'Post a New Job')
@@ -270,24 +313,6 @@ def reset_token(token):
     return render_template('reset_token.html', title = 'Reset Password', form = form)
 
 
-# @app.route('/search')
-# def search():
-    # article_page = request.args.get('page', 1, type=int)
-    # vid_page = request.args.get('page', 1, type=int)
-    # search_value = request.args.get('search_string')
-    # search = "%{0}%".format(search_value)
-    # article_results = Articles.query.filter(db.or_(Articles.title.like(search),
-    # Articles.content.like(search),Articles.pic_desc.like(search)))\
-    # .order_by(Articles.date_posted.desc())\
-    # .paginate(per_page=20, page=article_page)
-    # vid_results = Videos.query.filter(db.or_(Videos.title.like(search),
-    # Videos.video_desc.like(search)))\
-    # .order_by(Videos.date_posted.desc())\
-    # .paginate(per_page=20, page=vid_page)
-    # return render_template('pages/search_results.html',article_results=article_results,
-    # search_value=search_value,vid_results=vid_results)
-
-
 @app.route('/terms_and_conditions')
 def terms_conditions():
     return render_template('Terms_and_conditions.html', title='Terms and conditions')
@@ -414,3 +439,22 @@ def submitted_proposals(id):
    
     flash(f'Showing proposals for {job.title}!', 'secondary')
     return render_template('submitted-proposals.html', job=job)
+
+@app.route('/job_alert', methods = ['POST'])
+@login_required
+def job_alerts():
+    category = request.form.get('category')
+    schedule = request.form.get('schedule')
+    county = request.form.get('county')
+    c = Categories.query.filter_by(categoryname=category).first_or_404()
+    s = Jobschedule.query.filter_by(schedulename=schedule).first_or_404()
+    l = Counties.query.filter_by(name=county).first_or_404()
+    email = current_user.email
+
+    alert = Jobalerts(email=email, category=c, schedule=s,county=l)
+    db.session.add(alert)
+    db.session.commit()
+
+    flash(f'You job alert has been set successfully', 'secondary')
+
+    return redirect(url_for('index'))

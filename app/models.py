@@ -1,5 +1,6 @@
 from datetime import datetime
 from email import message
+from unicodedata import category
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from app import app,db,login_manager
 from flask_login import UserMixin
@@ -14,13 +15,11 @@ class Users(db.Model, UserMixin):
     email = db.Column(db.String(120), unique =True, nullable = False)
     profile_pic = db.Column(db.String(20), nullable = False, default = 'avatar.png')
     password = db.Column(db.String(100), nullable = False)
-    bio = db.Column(db.String(500))
     admin = db.Column(db.Boolean, nullable = False, default = False)
     jobs_posted = db.relationship('Jobs', backref = 'author', lazy = True)
     docs = db.relationship('Docs', backref = 'uploader', lazy = True)
     proposals = db.relationship('Proposals', backref = 'job_seeker', lazy = True)
-    address = db.Column(db.String(50))
-    phone_number = db.Column(db.String(50))
+    phone_number = db.Column(db.String(50), nullable = False)
     city = db.Column(db.String(50))
 
     def get_reset_token(self,expires_sec=3600):
@@ -134,3 +133,23 @@ class Categories(db.Model):
 
     def __repr__(self):
         return f"Categories('{self.id}','{self.categoryname}')"
+
+class Jobalerts(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(200), nullable = False)
+    category = db.Column(db.String(200), nullable = False)
+    schedule = db.Column(db.String(200), nullable = False)
+    county = db.Column(db.String(200), nullable = False)
+
+    def __repr__(self):
+        return f"Jobalert('{self.id}','{self.email}')"
+
+class Notifications(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    sender = db.Column(db.String(200), nullable = False)
+    receiver = db.Column(db.String(200), nullable = False)
+    message = db.Column(db.String(200), nullable = False)
+    date_sent = db.Column(db.DateTime, nullable = False, default = datetime.utcnow) 
+
+    def __repr__(self):
+        return f"Notification('{self.id}')"
