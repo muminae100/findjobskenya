@@ -318,7 +318,7 @@ def deletejob(id):
     db.session.delete(job)
     db.session.commit()
     flash('Your job post has been deleted!', 'success')
-    return redirect(url_for('index'))
+    return redirect(url_for('author_jobs', username= current_user.username ))
 
 @app.route('/togglejob/<int:id>/', methods = ['POST'])
 @login_required
@@ -542,6 +542,8 @@ def delete_proposal(id):
     proposal = Proposals.query.get_or_404(int(id))
     if proposal.job_seeker != current_user:
         abort(404)
+    for doc in proposal.docs:
+        os.remove(os.path.join(app.config['UPLOAD_FOLDER'], doc.docname))
 
     db.session.delete(proposal)
     db.session.commit()
