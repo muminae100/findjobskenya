@@ -62,7 +62,12 @@
                             </div>
                             {% endif %}
                             {% for doc in proposal.docs %}
-                            <p style="color: #007bff;"><a target="_blank" href="{{ url_for('uploaded_file', filename = doc.docname) }}">{{ doc.docname }}</a></p>
+                            <p style="color: #007bff;">
+                                <a target="_blank" href="{{ url_for('uploaded_file', filename = doc.docname) }}">{{ doc.docname }}</a>
+                                <a href="{{ url_for('deletedoc', docname=doc.docname, id=proposal.id) }}">
+                                    <i class="fa fa-trash"></i>
+                                </a>
+                            </p>
                             {% endfor %}
                             
 

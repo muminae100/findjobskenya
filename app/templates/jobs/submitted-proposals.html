@@ -47,11 +47,23 @@
                             <p><span style="font-weight: bold;">Phone Number:</span> {{ proposal.phone }}</p>
                             <p style="font-weight: bold;">Message:</p>
                             <pre>{{ proposal.message }}</pre>
-                            <h5>Documents</h5>
+                            <h5>Other documents</h5>
                             {% for doc in proposal.docs %}
                             <p style="color: #007bff;"><a target="_blank" href="{{ url_for('uploaded_file', filename = doc.docname) }}">{{ doc.docname }}</a></p>
                             {% endfor %}
-                            <button class="btn btn-lg btn-primary mt-5">Reply</button>
+                        </div>
+                        <div class="post-content">
+                            <p>Contact Applicant</p>
+                            <div>
+                                <a href="tel:{{ proposal.job_seeker.phone_number }}">
+                                    <i class="fa fa-phone p-2"></i>
+                                </a>
+                                <a href="mailto:{{ proposal.job_seeker.email }}">
+                                    <i class="fa fa-envelope p-2"></i>
+                                </a>
+                            </div>
+                            <p class="mt-2">or</p>
+                            <button class="btn btn-lg btn-primary mt-3">Reply on our website</button>
                         </div>
                     </div>
                     </div>

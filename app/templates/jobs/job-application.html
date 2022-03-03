@@ -57,17 +57,27 @@
 
                             <div class="single-description-para border-top pt-30 ">
                                 <h6>Application Process<span>*</span></h6>
-                                <p class="text_body_color">Applications must be submitted through the link below on
+                                <p class="text_body_color">Applicants can submit their applications through the link below on
                                     this page by clicking on
                                     Apply Button.</p>
+                                <p class="mt-2">or</p>
+                                <p class="mt-2">Contact the recruiter through the phone or email</p>
+                                <div class="mt-2">
+                                    <a href="tel:{{ job.author.phone_number }}">
+                                        <i class="fa fa-phone p-2"></i>
+                                    </a>
+                                    <a href="mailto:{{ job.author.email }}">
+                                        <i class="fa fa-envelope p-2"></i>
+                                    </a>
+                                </div>
                             </div>
 
                             <div class="d-flex justify-content-between border-top pt-40">
                                 <button class="theme-btn theme-btn-lg" data-bs-toggle="modal"
                                     data-bs-target="#applyModal">apply now <i class="arrow_right"></i> </button>
                                 {% if job in current_user.saved_jobs %}
-                                <button class="theme-btn theme-btn-primary theme-btn-lg custom-btn"><i
-                                        class="icon_ribbon_alt t"></i> Saved </button>
+                                <a class="theme-btn theme-btn-primary theme-btn-lg custom-btn"><i
+                                        class="icon_ribbon_alt t"></i> Saved </a>
                                 {% else %}
                                 <a class="theme-btn theme-btn-primary_alt theme-btn-lg custom-btn" href="{{ url_for('save_job',id=job.id) }}"><i
                                     class="icon_ribbon_alt t"></i> Save </a>

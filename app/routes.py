@@ -25,7 +25,6 @@ def allowed_file(filename):
 def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'],filename)
 
-
 @app.route('/')
 @login_required
 def index():
@@ -51,7 +50,7 @@ def index():
     location = Counties.query.filter_by(name=county).first_or_404()
     jobs = Jobs.query.filter_by(schedule=jobschedule).filter_by(location=location).filter_by(category=jobcategory).order_by(Jobs.date_posted.desc()).paginate(per_page=20, page=page)
     message =  f'Showing {category} {schedule} jobs in {county}'
-    return render_template('index.html', categories=categories, jobs=jobs, schedules=schedules,counties=counties,
+    return render_template('jobs/index.html', categories=categories, jobs=jobs, schedules=schedules,counties=counties,
     category=jobcategory,jobschedule=jobschedule,county=location,message=message, length = length)
 
 @app.route('/login', methods = ['GET','POST'])
@@ -137,34 +136,34 @@ def send_alert_email(job, email):
                    recipients=[email])
     msg.body = f'''A new job has been posted:
 
-{job.title}
-{job.category.categoryname}
-{job.location.name}
-{job.schedule.schedulename}
-Job responsibilities:
-{job.job_responsibilities}
-Education level:
-{job.education}
-Experience:
-{job.experience}
-Additional requirements:
-{job.additional_req}
-Compensation:
-{job.compensation}
-Job Active:
-{job.active}
-Salary:
-{job.salary}
-Date posted:
-{job.date_posted}
-Posted by 
-{job.author.username}
-Contact details:
-{job.author.email}
-{job.author.phone_number}
+    {job.title}
+    {job.category.categoryname}
+    {job.location.name}
+    {job.schedule.schedulename}
+    Job responsibilities:
+    {job.job_responsibilities}
+    Education level:
+    {job.education}
+    Experience:
+    {job.experience}
+    Additional requirements:
+    {job.additional_req}
+    Compensation:
+    {job.compensation}
+    Job Active:
+    {job.active}
+    Salary:
+    {job.salary}
+    Date posted:
+    {job.date_posted}
+    Posted by 
+    {job.author.username}
+    Contact details:
+    {job.author.email}
+    {job.author.phone_number}
 
-You can view the job in our website using the link below:
-{url_for('job',id=job.id,_external = True)}
+    You can view the job in our website using the link below:
+    {url_for('job',id=job.id,_external = True)}
 
 '''
     mail.send(msg)
@@ -242,7 +241,7 @@ def newjob():
         check_alerts(j)
         flash('Your job has been posted successfully!', 'success')
         return redirect(url_for('job',id=job.id))
-    return render_template('newjob.html', title = 'Post new job',form=form, text = 'Post a New Job', length=length)
+    return render_template('jobs/newjob.html', title = 'Post new job',form=form, text = 'Post a New Job', length=length)
 
 
 @app.route('/<int:id>', methods = ['GET', 'POST'])
@@ -259,7 +258,7 @@ def job(id):
     job = Jobs.query.get_or_404(int(id))
     now = datetime.datetime.now() 
     time_posted = timeago.format(job.date_posted, now)
-    return render_template('job-application.html', title=job.title, job = job,time_posted=time_posted,form=form, length=length)
+    return render_template('jobs/job-application.html', title=job.title, job = job,time_posted=time_posted,form=form, length=length)
 
 @app.route('/<int:id>/update', methods = ['GET', 'POST'])
 @login_required
@@ -305,7 +304,7 @@ def jobupdate(id):
         form.compensation.data = job.compensation
         form.salary.data = job.salary
 
-    return render_template('updatejob.html', title = 'Update job post', form = form, text = 'Update post', length=length)
+    return render_template('jobs/updatejob.html', title = 'Update job post', form = form, text = 'Update post', length=length)
 
 
 @app.route('/<int:id>/delete', methods = ['POST'])
@@ -347,7 +346,7 @@ def author_jobs(username):
     jobs = Jobs.query.filter_by(author=user)\
         .order_by(Jobs.date_posted.desc())\
         .all()
-    return render_template('user-jobs.html',jobs = jobs, length=length)
+    return render_template('jobs/user-jobs.html',jobs = jobs, length=length)
 
 
 def send_reset_email(user):
@@ -398,7 +397,7 @@ def terms_conditions():
             n.append(notification)
 
     length = len(n)
-    return render_template('Terms_and_conditions.html', title='Terms and conditions', length=length)
+    return render_template('terms_and_conditions.html', title='Terms and conditions', length=length)
 
 @app.route('/privacy_policy')
 def privacy_policy():
@@ -415,10 +414,12 @@ def privacy_policy():
 
 # save job
 
-@app.route('/job/<int:id>')
+@app.route('/savejob/<int:id>')
 @login_required
 def save_job(id):
     job = Jobs.query.get_or_404(int(id))
+    if job.author == current_user:
+        flash('You can not save your own job', 'danger')
     current_user.saved_jobs.append(job)
     db.session.commit()
     flash('Job saved successfully', 'success')
@@ -435,11 +436,192 @@ def saved_jobs():
 
     length = len(n)
     jobs = current_user.saved_jobs
-    return render_template('saved-jobs.html', jobs=jobs, length=length)
+    return render_template('jobs/saved-jobs.html', jobs=jobs, length=length)
 
 
 
 # proposals
+
+def send_email_applicant(proposal, job):
+    msg = Message('You job proposal has been submitted successfully', 
+                   sender= f'smuminaetx100@gmail.com',
+                   recipients=[job.author.email])
+    msg.body = f'''Job details:
+
+    {job.title}
+    {job.category.categoryname}
+    {job.location.name}
+    {job.schedule.schedulename}
+    Job responsibilities:
+    {job.job_responsibilities}
+    Education level:
+    {job.education}
+    Experience:
+    {job.experience}
+    Additional requirements:
+    {job.additional_req}
+    Compensation:
+    {job.compensation}
+    Job Active:
+    {job.active}
+    Salary:
+    {job.salary}
+    Date posted:
+    {job.date_posted}
+    Posted by 
+    {job.author.username}
+    Contact details:
+    {job.author.email}
+    {job.author.phone_number}
+
+    You can view the job in our website using the link below:
+    {url_for('job',id=job.id,_external = True)}
+
+'''
+    mail.send(msg)
+
+
+def send_notification_applicant(p,j):
+    s = Users.query.filter_by(email=j.author.email).first_or_404()
+    r = Users.query.filter_by(email=p.job_seeker.email).first_or_404()
+    message = f'''
+    Your  job proposal has been submitted successfully!
+    Applicant information:
+    First Name: {p.firstname}
+    Last Name: {p.lastname}
+    Phone Number: {p.phone}
+    Email: {p.email}
+
+    Message:
+    {p.message}
+
+    Job details:
+    {j.title}
+    {j.category.categoryname}
+    {j.location.name}
+    {j.schedule.schedulename}
+    Job responsibilities:
+    {j.job_responsibilities}
+    Education level:
+    {j.education}
+    Experience:
+    {j.experience}
+    Additional requirements:
+    {j.additional_req}
+    Compensation:
+    {j.compensation}
+    Job Active:
+    {j.active}
+    Salary:
+    {j.salary}
+    Date posted:
+    {j.date_posted}
+    Posted by 
+    {j.author.username}
+    Contact details:
+    {j.author.email}
+    {j.author.phone_number}
+    '''
+    
+    notification = Notifications(sender=s.email, receiver=r.email, message=message)
+    db.session.add(notification)
+    db.session.commit()
+
+
+def send_email_recruiter(proposal, job):
+    msg = Message(f'You have received a new job proposal from {proposal.job_seeker.username}', 
+                   sender= 'smuminaetx100@gmail.com',
+                   recipients=[job.author.email])
+    msg.body = f'''
+    Applicant information:
+    First Name: {proposal.firstname}
+    Last Name: {proposal.lastname}
+    Phone Number: {proposal.phone}
+    Email: {proposal.email}
+
+    Message:
+    {proposal.message}
+
+    Application applied for your job posted on 
+    {job.date_posted} below:
+
+    {job.title}
+    {job.category.categoryname}
+    {job.location.name}
+    {job.schedule.schedulename}
+    Job responsibilities:
+    {job.job_responsibilities}
+    Education level:
+    {job.education}
+    Experience:
+    {job.experience}
+    Additional requirements:
+    {job.additional_req}
+    Compensation:
+    {job.compensation}
+    Job Active:
+    {job.active}
+    Salary:
+    {job.salary}
+
+    You can view the proposal in our website using the link below:
+    {url_for('proposal',id=proposal.id,_external = True)}
+
+'''
+    mail.send(msg)
+
+
+def send_notification_recruiter(p,j):
+    s = Users.query.filter_by(email=p.job_seeker.email).first_or_404()
+    r = Users.query.filter_by(email=j.author.email).first_or_404()
+    message = f'''
+    You have received a new job proposal from {p.job_seeker.username}
+
+    Applicant information:
+    First Name: {p.firstname}
+    Last Name: {p.lastname}
+    Phone Number: {p.phone}
+    Email: {p.email}
+
+    Message:
+    {p.message}
+
+    Application applied for your job posted on {j.date_posted} below:
+    
+    
+    Job details:
+    {j.title}
+    {j.category.categoryname}
+    {j.location.name}
+    {j.schedule.schedulename}
+    Job responsibilities:
+    {j.job_responsibilities}
+    Education level:
+    {j.education}
+    Experience:
+    {j.experience}
+    Additional requirements:
+    {j.additional_req}
+    Compensation:
+    {j.compensation}
+    Job Active:
+    {j.active}
+    Salary:
+    {j.salary}
+    '''
+    
+    notification = Notifications(sender=s.email, receiver=r.email, message=message)
+    db.session.add(notification)
+    db.session.commit()
+
+
+
+def send_proposal_emails(p, j):
+    # send_email_applicant(p, j)
+    send_email_recruiter(p, j)
+    send_notification_applicant(p, j)
+    send_notification_recruiter(p, j)
+
 @app.route('/submit_proposal/job/<int:id>', methods =['POST'])
 @login_required
 def submit_proposal(id):
@@ -450,6 +632,9 @@ def submit_proposal(id):
         email=form.email.data,message=form.message.data,job_seeker=current_user,its_job=job)
         db.session.add(proposal)
         db.session.commit()
+
+        send_proposal_emails(proposal, job)
+
         flash('Job proposal submitted successfully', 'success')
     return redirect(url_for('my_proposals'))
 
@@ -463,7 +648,7 @@ def my_proposals():
             n.append(notification)
 
     length = len(n)
-    return render_template('proposals.html', length=length)
+    return render_template('jobs/proposals.html', length=length)
 
 @app.route('/proposal/<int:id>', methods=['GET', 'POST'])
 @login_required
@@ -500,7 +685,7 @@ def proposal(id):
 
             return fn
 
-    return render_template('proposal.html', proposal=proposal, length=length)
+    return render_template('jobs/proposal.html', proposal=proposal, length=length)
 
 @app.route('/update-proposal/<int:id>', methods=['GET', 'POST'])
 @login_required
@@ -533,8 +718,18 @@ def update_proposal(id):
         form.phone.data = proposal.phone
         form.email.data = proposal.email
         form.message.data = proposal.message
-    return render_template('update-proposal.html', form=form, proposal=proposal, length=length)
+    return render_template('jobs/update-proposal.html', form=form, proposal=proposal, length=length)
 
+@app.route('/delete-doc/<string:docname>/<int:id>')
+@login_required
+def deletedoc(docname, id):
+    doc = Docs.query.filter_by(docname=docname).first_or_404()
+    if doc.uploader != current_user:
+        abort(404)
+    os.remove(os.path.join(app.config['UPLOAD_FOLDER'], doc.docname))
+    db.session.delete(doc)
+    db.session.commit()
+    return redirect(url_for('proposal', id= id))
 
 @app.route('/delete-proposal/<int:id>', methods = ['POST'])
 @login_required
@@ -565,7 +760,7 @@ def submitted_proposals(id):
         abort(404)
    
     flash(f'Showing proposals for {job.title}!', 'secondary')
-    return render_template('submitted-proposals.html', job=job, length=length)
+    return render_template('jobs/submitted-proposals.html', job=job, length=length)
 
 @app.route('/job_alert', methods = ['POST'])
 @login_required

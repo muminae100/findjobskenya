@@ -48,7 +48,7 @@
 
                             <div class="single-sidebar-widget mt-30 widget-shadow">
                                 <div class="widget-title">
-                                    <h5>County</h5>
+                                    <h5>Select County</h5>
                                 </div>
                                 <div class="select-location">
                                     <span class="arrow-icon"><i class="arrow_carrot-down"></i></span>
@@ -161,6 +161,16 @@
                                 </div>
                                 <div class="post-content">
                                     <p>{{ job.job_responsibilities }}</p>
+                                </div>
+                                <div class="post-content">
+                                    <div>
+                                        <a href="tel:{{ job.author.phone_number }}">
+                                            <i class="fa fa-phone p-2"></i>
+                                        </a>
+                                        <a href="mailto:{{ job.author.email }}">
+                                            <i class="fa fa-envelope p-2"></i>
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                             {% endif %}
