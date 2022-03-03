@@ -588,18 +588,17 @@ def job_alerts():
 @login_required
 def notifications():
     notifications = Notifications.query.order_by(Notifications.date_sent.desc()).all()
-    n = []
-    for notification in notifications:
-        if notification.receiver == current_user.email:
-            notification.read = True
-            db.session.commit()
-            n.append(notification)
-
     l = []
 
     for notification in notifications:
         if notification.receiver == current_user.email and notification.read == False:
             l.append(notification)
 
+    for notification in notifications:
+        if notification.receiver == current_user.email:
+            notification.read = True
+            db.session.commit()
+
+
     length = len(l)
-    return render_template('notifications.html', notifications=n, length=length)
+    return render_template('notifications.html', notifications=l, length=length)

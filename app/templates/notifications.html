@@ -26,24 +26,16 @@
                     <div class="jumbotron">
                         <h3>You don't have any new notifications for now</h3>
                     </div>
-                    {% endif %}
-                    {% for notification in notifications %}
-                    {% if notification.read == False %}
-                    <div class="container bg-info">
-                    <h3>Unread notifications</h3>
-                    <pre>
-                        {{ notification.message }}
-                    </pre>
-                    </div>
                     {% else %}
                     <div class="container">
-                    <p class="bg-danger text-light p-3">Read notification</p>
+                    <h3 class="p-3 bg-primary text-light">Unread notifications</h3>
+                    {% for notification in notifications %}           
                     <pre>
                         {{ notification.message }}
-                    </pre>
+                    </pre>        
+                    {% endfor %}
                     </div>
                     {% endif %}
-                    {% endfor %}
                 </div>
             </div>
         </div>
