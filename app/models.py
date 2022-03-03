@@ -110,22 +110,6 @@ class Jobschedule(db.Model):
         return f"JobSchedule('{self.id}','{self.schedulename}')"
 
 
-
-subscribers_table = db.Table('subscribers_table',
-    db.Column('sub_id', db.Integer, db.ForeignKey('subscribers.id')),
-    db.Column('category_id', db.Integer, db.ForeignKey('categories.id')),
-)
-
-class Subscribers(db.Model):
-    id = db.Column(db.Integer,primary_key = True)
-    email = db.Column(db.String(120), unique =True, nullable = False)
-    categories = db.relationship("Categories", secondary=subscribers_table, backref=db.backref('subs', lazy= 'dynamic'))
-
-    def __repr__(self):
-        return f"subscriber('{self.id}','{self.email}')"
-
-
-
 class Categories(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     categoryname = db.Column(db.String(200), nullable = False,unique=True)
@@ -149,6 +133,7 @@ class Notifications(db.Model):
     sender = db.Column(db.String(200), nullable = False)
     receiver = db.Column(db.String(200), nullable = False)
     message = db.Column(db.String(200), nullable = False)
+    read = db.Column(db.Boolean, nullable = False, default = False)
     date_sent = db.Column(db.DateTime, nullable = False, default = datetime.utcnow) 
 
     def __repr__(self):

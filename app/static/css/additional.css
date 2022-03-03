@@ -150,3 +150,17 @@ margin-left: 1px;
 body{
   overflow-x: hidden;
 }
+.notification {
+  position: relative;
+  display: inline-block;
+}
+
+.notification .badge {
+  position: absolute;
+  top: -5px;
+  right: -15px;
+  padding: 2px 6px;
+  border-radius: 50%;
+  background: red;
+  color: white;
+}

@@ -1,0 +1,52 @@
+{% extends "layout.html" %}
+{% block body %}
+<!-- BreadCrumb start -->
+<section class="breadcrumb-area">
+    <div class="breadcrumb-widget  pt-145 pb-125" style="background-image: url(../static/img/breadcrumb/bg-2.png);">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="breadcrumb-content pt-170">
+                        <h1>My notifications</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+<!-- BreadCrumb end -->
+
+<section class="pt-140 pb-140 get-touch-area bg_white">
+    <div class="container">
+        <div class="row gy-4 gy-lg-0">
+            <div class="col-lg-12">
+                <div class="contact-form-widget">
+                    {% if length == 0 %}
+                    <div class="jumbotron">
+                        <h3>You don't have any new notifications for now</h3>
+                    </div>
+                    {% endif %}
+                    {% for notification in notifications %}
+                    {% if notification.read == False %}
+                    <div class="container bg-info">
+                    <h3>Unread notifications</h3>
+                    <pre>
+                        {{ notification.message }}
+                    </pre>
+                    </div>
+                    {% else %}
+                    <div class="container">
+                    <p class="bg-danger text-light p-3">Read notification</p>
+                    <pre>
+                        {{ notification.message }}
+                    </pre>
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

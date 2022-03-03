@@ -76,10 +76,19 @@
                         <h3 style="color: purple;" class="sticky">JobsKenya</h3>
                     </a>
                     {% if current_user.is_authenticated %}
-                    <a class="collapsed-items" href="#" class="navbar-brand sticky_logo float-right">
-                        <i style="font-size: 25px;" class="fa fa-bell text-secondary mr-3"></i>
-                        <img class="rounded-circle" width="35" height="35" src="../static/img/profile-imgs/{{ current_user.profile_pic }}">
-                    </a>
+                    <div class="collapsed-items" class="navbar-brand sticky_logo float-right">
+                        {% if length > 0 %}
+                        <a href="{{ url_for('notifications') }}" class="notification">
+                            <span><i style="font-size: 25px;" class="fa fa-bell text-secondary"></i></span>
+                            <span class="badge">{{ length }}</span>
+                        </a>
+                        {% else %}
+                        <a href="{{ url_for('notifications') }}" class="notification">
+                            <span><i style="font-size: 25px;" class="fa fa-bell text-secondary"></i></span>
+                        </a>
+                        {% endif %}
+                        <img class="rounded-circle ml-3" width="35" height="35" src="../static/img/profile-imgs/{{ current_user.profile_pic }}">
+                    </div>
                     <button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse"
                         data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
@@ -195,9 +204,16 @@
                                 </ul>
                             </li>
                             <li id="inbox" class="nav-item submenu ">
-                                <a href="#" class="navbar-brand">
-                                    <i class="fa fa-bell text-secondary"></i>
+                                {% if length > 0 %}
+                                <a href="{{ url_for('notifications') }}" class="notification navbar-brand">
+                                    <span><i class="fa fa-bell text-secondary"></i></span>
+                                    <span class="badge">{{ length }}</span>
                                 </a>
+                                {% else %}
+                                <a href="{{ url_for('notifications') }}" class="notification navbar-brand">
+                                    <span><i class="fa fa-bell text-secondary"></i></span>
+                                </a>
+                                {% endif %}
                             </li>
                             <li id="profile-img" class="nav-item submenu">
                                 <a href="#" class="navbar-brand">

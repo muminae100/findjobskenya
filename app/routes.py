@@ -4,10 +4,10 @@ import secrets
 from PIL import Image
 from flask import render_template,redirect,request,url_for,flash,abort,jsonify,send_from_directory
 from app import app,db,bcrypt,mail
-from app.models import Jobalerts, Jobs, Proposals, Users, Categories, Jobschedule, Counties, Docs
+from app.models import Jobalerts, Jobs, Notifications, Proposals, Users, Categories, Jobschedule, Counties, Docs
 from flask_login import login_user,current_user,logout_user,login_required
 from app.forms import (RegistrationForm,LoginForm,UpdateAccountForm,
-PostJobForm,RequestResetForm,ResetPasswordForm,ContactForm,SubscribeForm,ProposalForm)
+PostJobForm,RequestResetForm,ResetPasswordForm,ContactForm,ProposalForm)
 from flask_mail import Message
 from werkzeug.utils import secure_filename
 UPLOAD_FOLDER = os.path.join(app.root_path, 'static/proposals/doc_uploads')
@@ -36,13 +36,23 @@ def index():
     categories = Categories.query.paginate()
     counties = Counties.query.all()
     schedules = Jobschedule.query.all()
+
+    n = []
+    notifications = Notifications.query.order_by(Notifications.date_sent.desc()).all()
+    for notification in notifications:
+        if notification.receiver == current_user.email and notification.read == False:
+            n.append(notification)
+
+    length = len(n)
+            
+
     jobcategory = Categories.query.filter_by(categoryname=category).first_or_404()
     jobschedule = Jobschedule.query.filter_by(schedulename=schedule).first_or_404()
     location = Counties.query.filter_by(name=county).first_or_404()
     jobs = Jobs.query.filter_by(schedule=jobschedule).filter_by(location=location).filter_by(category=jobcategory).order_by(Jobs.date_posted.desc()).paginate(per_page=20, page=page)
     message =  f'Showing {category} {schedule} jobs in {county}'
     return render_template('index.html', categories=categories, jobs=jobs, schedules=schedules,counties=counties,
-    category=jobcategory,jobschedule=jobschedule,county=location,message=message)
+    category=jobcategory,jobschedule=jobschedule,county=location,message=message, length = length)
 
 @app.route('/login', methods = ['GET','POST'])
 def login():
@@ -93,6 +103,13 @@ def save_picture(form_picture):
 @login_required
 def account():
     form = UpdateAccountForm()
+    n = []
+    notifications = Notifications.query.order_by(Notifications.date_sent.desc()).all()
+    for notification in notifications:
+        if notification.receiver == current_user.email and notification.read == False:
+            n.append(notification)
+
+    length = len(n)
     if form.validate_on_submit():
         if form.picture.data:
             picture_file = save_picture(form.picture.data)
@@ -106,18 +123,7 @@ def account():
         form.username.data = current_user.username
         form.email.data = current_user.email
     image_file = url_for('static', filename = 'img/profile-imgs/' + current_user.profile_pic)
-    return render_template('account.html', title = current_user.username, profile_pic = image_file, form = form)
-
-# @app.route('/subscribe', methods = ['GET','POST'])
-# def subscribe():
-#     form = SubscribeForm()
-#     if form.validate_on_submit():
-#         subscriber = Subscribers(email=form.email.data)
-#         db.session.add(subscriber)
-#         db.session.commit()
-#         flash('You have successfully subscribed to our newsletter', 'success')
-#         return redirect(url_for('index'))
-#     return render_template('subscribe.html',form=form)
+    return render_template('account.html', title = current_user.username, profile_pic = image_file, form = form, length=length)
 
 @app.route('/logout')
 def logout():
@@ -125,10 +131,10 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 
-def send_alert_email(job, user):
+def send_alert_email(job, email):
     msg = Message('Job alert', 
                    sender='smuminaetx100@gmail.com',
-                   recipients=[user.email])
+                   recipients=[email])
     msg.body = f'''A new job has been posted:
 
 {job.title}
@@ -149,6 +155,7 @@ Job Active:
 {job.active}
 Salary:
 {job.salary}
+Date posted:
 {job.date_posted}
 Posted by 
 {job.author.username}
@@ -157,15 +164,56 @@ Contact details:
 {job.author.phone_number}
 
 You can view the job in our website using the link below:
-{url_for('job',id={job.id},_external = True)}
+{url_for('job',id=job.id,_external = True)}
 
 '''
     mail.send(msg)
 
+
+def send_notification(j, receiver):
+    s = Users.query.filter_by(email=j.author.email).first_or_404()
+    r = Users.query.filter_by(email=receiver).first_or_404()
+    message = f'''
+    A new job has been posted by {j.author.username}
+    Job details:
+    {j.title}
+    {j.category.categoryname}
+    {j.location.name}
+    {j.schedule.schedulename}
+    Job responsibilities:
+    {j.job_responsibilities}
+    Education level:
+    {j.education}
+    Experience:
+    {j.experience}
+    Additional requirements:
+    {j.additional_req}
+    Compensation:
+    {j.compensation}
+    Job Active:
+    {j.active}
+    Salary:
+    {j.salary}
+    Date posted:
+    {j.date_posted}
+    Posted by 
+    {j.author.username}
+    Contact details:
+    {j.author.email}
+    {j.author.phone_number}
+    '''
+    
+    notification = Notifications(sender=s.email, receiver=r.email, message=message)
+    db.session.add(notification)
+    db.session.commit()
+
 def check_alerts(j):
-    alert = Jobalerts.query.filter_by(category=j.category).filter_by(county=j.county).filter_by(schedule=j.schedule).all()
-    if alert:
-        send_alert_email(j, alert.email)
+    alerts = Jobalerts.query.filter_by(category=j.category.categoryname).filter_by(county=j.location.name).filter_by(schedule=j.schedule.schedulename).all()
+    if alerts:
+        for alert in alerts:
+            send_alert_email(j, alert.email)
+            send_notification(j, alert.email)
+
 
 
 # jobs
@@ -173,6 +221,13 @@ def check_alerts(j):
 @login_required
 def newjob():
     form =PostJobForm()
+    n = []
+    notifications = Notifications.query.order_by(Notifications.date_sent.desc()).all()
+    for notification in notifications:
+        if notification.receiver == current_user.email and notification.read == False:
+            n.append(notification)
+
+    length = len(n)
     form.category.choices = [(category.id, category.categoryname) for category in Categories.query.all()]
     form.schedule.choices = [(schedule.id, schedule.schedulename) for schedule in Jobschedule.query.all()]
     form.location.choices = [(location.id, location.name) for location in Counties.query.all()]
@@ -183,26 +238,40 @@ def newjob():
         compensation=form.compensation.data)
         db.session.add(job)
         db.session.commit()
-        j = Jobs.query.first_or_404()
+        j = Jobs.query.order_by(Jobs.id.desc()).first_or_404()
         check_alerts(j)
         flash('Your job has been posted successfully!', 'success')
         return redirect(url_for('job',id=job.id))
-    return render_template('newjob.html', title = 'Post new job',form=form, text = 'Post a New Job')
+    return render_template('newjob.html', title = 'Post new job',form=form, text = 'Post a New Job', length=length)
 
 
 @app.route('/<int:id>', methods = ['GET', 'POST'])
 @login_required
 def job(id):
+    n = []
+    notifications = Notifications.query.order_by(Notifications.date_sent.desc()).all()
+    for notification in notifications:
+        if notification.receiver == current_user.email and notification.read == False:
+            n.append(notification)
+
+    length = len(n)
     form =ProposalForm()
     job = Jobs.query.get_or_404(int(id))
     now = datetime.datetime.now() 
     time_posted = timeago.format(job.date_posted, now)
-    return render_template('job-application.html', title=job.title, job = job,time_posted=time_posted,form=form)
+    return render_template('job-application.html', title=job.title, job = job,time_posted=time_posted,form=form, length=length)
 
 @app.route('/<int:id>/update', methods = ['GET', 'POST'])
 @login_required
 def jobupdate(id):
     job = Jobs.query.get_or_404(int(id))
+    n = []
+    notifications = Notifications.query.order_by(Notifications.date_sent.desc()).all()
+    for notification in notifications:
+        if notification.receiver == current_user.email and notification.read == False:
+            n.append(notification)
+
+    length = len(n)
     if job.author != current_user:
         abort(404)
 
@@ -236,7 +305,7 @@ def jobupdate(id):
         form.compensation.data = job.compensation
         form.salary.data = job.salary
 
-    return render_template('updatejob.html', title = 'Update job post', form = form, text = 'Update post')
+    return render_template('updatejob.html', title = 'Update job post', form = form, text = 'Update post', length=length)
 
 
 @app.route('/<int:id>/delete', methods = ['POST'])
@@ -267,11 +336,18 @@ def togglejob(id):
 @app.route('/author/<string:username>')
 @login_required
 def author_jobs(username):
+    n = []
+    notifications = Notifications.query.order_by(Notifications.date_sent.desc()).all()
+    for notification in notifications:
+        if notification.receiver == current_user.email and notification.read == False:
+            n.append(notification)
+
+    length = len(n)
     user = Users.query.filter_by(username=username).first_or_404()
     jobs = Jobs.query.filter_by(author=user)\
         .order_by(Jobs.date_posted.desc())\
         .all()
-    return render_template('user-jobs.html',jobs = jobs)
+    return render_template('user-jobs.html',jobs = jobs, length=length)
 
 
 def send_reset_email(user):
@@ -315,11 +391,25 @@ def reset_token(token):
 
 @app.route('/terms_and_conditions')
 def terms_conditions():
-    return render_template('Terms_and_conditions.html', title='Terms and conditions')
+    n = []
+    notifications = Notifications.query.order_by(Notifications.date_sent.desc()).all()
+    for notification in notifications:
+        if notification.receiver == current_user.email and notification.read == False:
+            n.append(notification)
+
+    length = len(n)
+    return render_template('Terms_and_conditions.html', title='Terms and conditions', length=length)
 
 @app.route('/privacy_policy')
 def privacy_policy():
-    return render_template('privacy_policy.html', title='Privacy policy')
+    n = []
+    notifications = Notifications.query.order_by(Notifications.date_sent.desc()).all()
+    for notification in notifications:
+        if notification.receiver == current_user.email and notification.read == False:
+            n.append(notification)
+
+    length = len(n)
+    return render_template('privacy_policy.html', title='Privacy policy',length=length)
 
 
 
@@ -337,8 +427,15 @@ def save_job(id):
 @app.route('/saved_jobs')
 @login_required
 def saved_jobs():
+    n = []
+    notifications = Notifications.query.order_by(Notifications.date_sent.desc()).all()
+    for notification in notifications:
+        if notification.receiver == current_user.email and notification.read == False:
+            n.append(notification)
+
+    length = len(n)
     jobs = current_user.saved_jobs
-    return render_template('saved-jobs.html', jobs=jobs)
+    return render_template('saved-jobs.html', jobs=jobs, length=length)
 
 
 
@@ -359,11 +456,25 @@ def submit_proposal(id):
 @app.route('/my-proposals')
 @login_required
 def my_proposals():
-    return render_template('proposals.html')
+    n = []
+    notifications = Notifications.query.order_by(Notifications.date_sent.desc()).all()
+    for notification in notifications:
+        if notification.receiver == current_user.email and notification.read == False:
+            n.append(notification)
+
+    length = len(n)
+    return render_template('proposals.html', length=length)
 
 @app.route('/proposal/<int:id>', methods=['GET', 'POST'])
 @login_required
 def proposal(id):
+    n = []
+    notifications = Notifications.query.order_by(Notifications.date_sent.desc()).all()
+    for notification in notifications:
+        if notification.receiver == current_user.email and notification.read == False:
+            n.append(notification)
+
+    length = len(n)
     proposal = Proposals.query.get_or_404(int(id))
     if proposal.job_seeker != current_user:
         abort(404)
@@ -389,11 +500,18 @@ def proposal(id):
 
             return fn
 
-    return render_template('proposal.html', proposal=proposal)
+    return render_template('proposal.html', proposal=proposal, length=length)
 
 @app.route('/update-proposal/<int:id>', methods=['GET', 'POST'])
 @login_required
 def update_proposal(id):
+    n = []
+    notifications = Notifications.query.order_by(Notifications.date_sent.desc()).all()
+    for notification in notifications:
+        if notification.receiver == current_user.email and notification.read == False:
+            n.append(notification)
+
+    length = len(n)
     proposal = Proposals.query.get_or_404(int(id))
     form =ProposalForm()
     if proposal.job_seeker != current_user:
@@ -415,7 +533,7 @@ def update_proposal(id):
         form.phone.data = proposal.phone
         form.email.data = proposal.email
         form.message.data = proposal.message
-    return render_template('update-proposal.html', form=form, proposal=proposal)
+    return render_template('update-proposal.html', form=form, proposal=proposal, length=length)
 
 
 @app.route('/delete-proposal/<int:id>', methods = ['POST'])
@@ -433,12 +551,19 @@ def delete_proposal(id):
 @app.route('/proposals_for_job/<int:id>')
 @login_required
 def submitted_proposals(id):
+    n = []
+    notifications = Notifications.query.order_by(Notifications.date_sent.desc()).all()
+    for notification in notifications:
+        if notification.receiver == current_user.email and notification.read == False:
+            n.append(notification)
+
+    length = len(n)
     job = Jobs.query.get_or_404(int(id))
     if job.author != current_user:
         abort(404)
    
     flash(f'Showing proposals for {job.title}!', 'secondary')
-    return render_template('submitted-proposals.html', job=job)
+    return render_template('submitted-proposals.html', job=job, length=length)
 
 @app.route('/job_alert', methods = ['POST'])
 @login_required
@@ -451,10 +576,30 @@ def job_alerts():
     l = Counties.query.filter_by(name=county).first_or_404()
     email = current_user.email
 
-    alert = Jobalerts(email=email, category=c, schedule=s,county=l)
+    alert = Jobalerts(email=email, category=c.categoryname, schedule=s.schedulename,county=l.name)
     db.session.add(alert)
     db.session.commit()
 
     flash(f'You job alert has been set successfully', 'secondary')
 
     return redirect(url_for('index'))
+
+@app.route('/notifications')
+@login_required
+def notifications():
+    notifications = Notifications.query.order_by(Notifications.date_sent.desc()).all()
+    n = []
+    for notification in notifications:
+        if notification.receiver == current_user.email:
+            notification.read = True
+            db.session.commit()
+            n.append(notification)
+
+    l = []
+
+    for notification in notifications:
+        if notification.receiver == current_user.email and notification.read == False:
+            l.append(notification)
+
+    length = len(l)
+    return render_template('notifications.html', notifications=n, length=length)
