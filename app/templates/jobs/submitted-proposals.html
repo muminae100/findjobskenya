@@ -63,8 +63,32 @@
                                 </a>
                             </div>
                             <p class="mt-2">or</p>
-                            <button class="btn btn-lg btn-primary mt-3">Reply on our website</button>
+                            <button class="btn btn-lg btn-primary mt-3"
+                            data-bs-toggle="modal"
+                            data-bs-target="#applyModal" 
+                            >Reply on our website</button>
                         </div>
+
+                        <div class="modal job-application-modal fade" id="applyModal" tabindex="-1" aria-labelledby="applyModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-body">
+                        <div class="post-content">
+                            <form action="{{ url_for('send_msg_applicant', j_id = job.id, p_id = proposal.id) }}" method="post">
+                                <div class="form-group">
+                                    <label for="comment">Message:</label>
+                                    <textarea name="msg" class="form-control" rows="5" id="msg" required></textarea>
+                                </div>
+                                <button class="btn btn-primary btn-lg" type="submit">Send</button>
+                            </form>
+                        </div>
+                        </div>
+                        </div>
+                        </div>
+                        </div>
+
+
                     </div>
                     </div>
                     {% endfor %}

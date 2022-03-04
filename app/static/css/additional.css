@@ -164,3 +164,7 @@ body{
   background: red;
   color: white;
 }
+
+.reply-applicant{
+  display: none;
+}

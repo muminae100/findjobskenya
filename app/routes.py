@@ -442,11 +442,14 @@ def saved_jobs():
 
 # proposals
 
-def send_email_applicant(proposal, job):
-    msg = Message('You job proposal has been submitted successfully', 
+def send_email_applicant(proposal, job, m):
+    msg = Message(f'You have received a reply from {job.author.username}', 
                    sender= f'smuminaetx100@gmail.com',
-                   recipients=[job.author.email])
-    msg.body = f'''Job details:
+                   recipients=[proposal.job_seeker.email])
+    msg.body = f'''Message:
+    {m}
+
+    This message was send after you had applied for the job below:
 
     {job.title}
     {job.category.categoryname}
@@ -617,7 +620,6 @@ def send_notification_recruiter(p,j):
 
 
 def send_proposal_emails(p, j):
-    # send_email_applicant(p, j)
     send_email_recruiter(p, j)
     send_notification_applicant(p, j)
     send_notification_recruiter(p, j)
@@ -649,6 +651,74 @@ def my_proposals():
 
     length = len(n)
     return render_template('jobs/proposals.html', length=length)
+
+
+
+
+def send_doc_recruiter(proposal, job, doc):
+    msg = Message(f'{proposal.job_seeker.username} has uploaded a new document to add on to his/her job application', 
+                   sender= 'smuminaetx100@gmail.com',
+                   recipients=[job.author.email])
+    msg.body = f'''
+    Document uploaded: 
+
+    {url_for('uploaded_file',filename={doc.docname},_external = True)}
+    Uploaded on {doc.date_uploaded}
+
+    Applicant information:
+    First Name: {proposal.firstname}
+    Last Name: {proposal.lastname}
+    Phone Number: {proposal.phone}
+    Email: {proposal.email}
+
+    Message:
+    {proposal.message}
+
+    Job applied for:
+
+    {url_for('job',id=job.id,_external = True)}
+
+    All applications link:
+
+    {url_for('submitted_proposals',id=job.id,_external = True)}
+
+'''
+    mail.send(msg)
+
+
+def send_doc_recruiter_notification(proposal,job,doc):
+    s = Users.query.filter_by(email=proposal.job_seeker.email).first_or_404()
+    r = Users.query.filter_by(email=job.author.email).first_or_404()
+    message = f'''
+    {proposal.job_seeker.username} has uploaded a new document to add on to his/her job application
+
+    Document uploaded: 
+
+    {url_for('uploaded_file',filename={doc.docname},_external = True)}
+    Uploaded on {doc.date_uploaded}
+
+    Applicant information:
+    First Name: {proposal.firstname}
+    Last Name: {proposal.lastname}
+    Phone Number: {proposal.phone}
+    Email: {proposal.email}
+
+    Message:
+    {proposal.message}
+
+    Job applied for:
+
+    {url_for('job',id=job.id,_external = True)}
+
+    All applications link:
+
+    {url_for('submitted_proposals',id=job.id,_external = True)}
+
+    '''
+    
+    notification = Notifications(sender=s.email, receiver=r.email, message=message)
+    db.session.add(notification)
+    db.session.commit()
 
 @app.route('/proposal/<int:id>', methods=['GET', 'POST'])
 @login_required
@@ -682,6 +752,9 @@ def proposal(id):
             doc = Docs(docname=fn, uploader=current_user,proposal=proposal)
             db.session.add(doc)
             db.session.commit()
+
+            send_doc_recruiter(proposal, proposal.its_job, doc)
+            send_doc_recruiter_notification(proposal, proposal.its_job, doc)
 
             return fn
 
@@ -799,3 +872,61 @@ def notifications():
 
     length = len(l)
     return render_template('notifications.html', notifications=l, length=length)
+
+
+
+def send_applicant_reply(p,j,m):
+    s = Users.query.filter_by(email=j.author.email).first_or_404()
+    r = Users.query.filter_by(email=p.job_seeker.email).first_or_404()
+    message = f'''You have received a reply from {j.author.username}
+    
+    Message:
+    {m}
+
+    This message was send after you had applied for the job below:
+
+    Job details:
+    {j.title}
+    {j.category.categoryname}
+    {j.location.name}
+    {j.schedule.schedulename}
+    Job responsibilities:
+    {j.job_responsibilities}
+    Education level:
+    {j.education}
+    Experience:
+    {j.experience}
+    Additional requirements:
+    {j.additional_req}
+    Compensation:
+    {j.compensation}
+    Job Active:
+    {j.active}
+    Salary:
+    {j.salary}
+    Date posted:
+    {j.date_posted}
+    Posted by 
+    {j.author.username}
+    Contact details:
+    {j.author.email}
+    {j.author.phone_number}
+    '''
+    
+    notification = Notifications(sender=s.email, receiver=r.email, message=message)
+    db.session.add(notification)
+    db.session.commit()
+
+@app.route('/send_msg_applicant/<int:j_id>/<int:p_id>', methods = ['POST'])
+@login_required
+def send_msg_applicant(j_id, p_id):
+    msg = request.form.get('msg')
+    p = Proposals.query.get(int(p_id))
+    j = Jobs.query.get(int(j_id))
+    if j.author != current_user:
+        abort(404)
+    send_email_applicant(p, j, msg)
+    send_applicant_reply(p, j, msg)
+
+    flash('You have successfully sent the message to the applicant', 'success')
+    return redirect(url_for('submitted_proposals', id=j.id))
