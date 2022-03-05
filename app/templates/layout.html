@@ -30,6 +30,7 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename = 'css/style.css') }}" media="all" />
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename = 'css/responsive.css') }}" media="all" />
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename = 'css/additional.css') }}" media="all" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename = 'css/marketplace.css') }}" media="all" />
 
     <script>
         $(document).ready(function(){
@@ -174,33 +175,17 @@
                             <li class="nav-item dropdown submenu">
                                 <a class="nav-link dropdown-toggle" href="#" role="button"
                                     data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    Services
-                                </a>
-                                <i class="arrow_carrot-down_alt2 mobile_dropdown_icon" aria-hidden="false"
-                                    data-bs-toggle="dropdown"></i>
-
-                                <ul class="dropdown-menu">
-                                    <li class="nav-item"><a class="nav-link" href="#">Services</a></li>
-                                    <li class="nav-item"><a class="nav-link" href="#">Post new service</a></li>
-                                    <li class="nav-item"><a class="nav-link" href="#">My posted services</a>
-                                        <li class="nav-item"><a class="nav-link" href="#">Saved services</a></li>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li class="nav-item dropdown submenu">
-                                <a class="nav-link dropdown-toggle" href="#" role="button"
-                                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     Market place
                                 </a>
                                 <i class="arrow_carrot-down_alt2 mobile_dropdown_icon" aria-hidden="false"
                                     data-bs-toggle="dropdown"></i>
 
                                 <ul class="dropdown-menu">
-                                    <li class="nav-item"><a class="nav-link" href="#">Market place</a></li>
-                                    <li class="nav-item"><a class="nav-link" href="#">Post new product</a></li>
-                                    <li class="nav-item"><a class="nav-link" href="#">My posted products</a>
+                                    <li class="nav-item"><a class="nav-link" href="{{ url_for('market_place') }}">Market place</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{{ url_for('newproduct') }}">Post new product/service</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{{ url_for('author_products') }}">My posted products/services</a>
                                     </li>
-                                    <li class="nav-item"><a class="nav-link" href="#">Saved products</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{{ url_for('saved_products') }}">Liked products/services</a></li>
                                 </ul>
                             </li>
                             <li id="inbox" class="nav-item submenu ">
@@ -338,6 +323,7 @@
     <script type="text/javascript" src="{{ url_for('static', filename = 'js/custom.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename = 'js/jquery-editable-select.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename = 'js/additional.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename = 'js/marketplace.js') }}"></script>
 
     
     <script type="text/javascript">

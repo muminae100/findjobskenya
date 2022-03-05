@@ -4,16 +4,19 @@ import secrets
 from PIL import Image
 from flask import render_template,redirect,request,url_for,flash,abort,jsonify,send_from_directory
 from app import app,db,bcrypt,mail
-from app.models import Jobalerts, Jobs, Notifications, Proposals, Users, Categories, Jobschedule, Counties, Docs
+from app.models import (Jobalerts, Jobs, Notifications, Proposals, Products, Productalerts,
+Users, Categories, Jobschedule, Counties, Docs, Productcategories, Productimg)
 from flask_login import login_user,current_user,logout_user,login_required
 from app.forms import (RegistrationForm,LoginForm,UpdateAccountForm,
-PostJobForm,RequestResetForm,ResetPasswordForm,ContactForm,ProposalForm)
+PostJobForm,RequestResetForm,ResetPasswordForm,ContactForm,ProposalForm, PostProductForm)
 from flask_mail import Message
 from werkzeug.utils import secure_filename
 UPLOAD_FOLDER = os.path.join(app.root_path, 'static/proposals/doc_uploads')
+PRODUCTS_IMAGES_FOLDER = os.path.join(app.root_path, 'static/img/marketplace')
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['PRODUCTS_IMAGES_FOLDER'] = PRODUCTS_IMAGES_FOLDER
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -930,3 +933,224 @@ def send_msg_applicant(j_id, p_id):
 
     flash('You have successfully sent the message to the applicant', 'success')
     return redirect(url_for('submitted_proposals', id=j.id))
+
+
+# market place
+@app.route('/marketplace')
+@login_required
+def market_place():
+    page = request.args.get('page', 1, type=int)
+    category = request.args.get('category', 'Fashion', type=str)
+    county = request.args.get('county', 'Nairobi', type=str)
+    categories = Productcategories.query.paginate()
+    counties = Counties.query.all()
+
+    n = []
+    notifications = Notifications.query.order_by(Notifications.date_sent.desc()).all()
+    for notification in notifications:
+        if notification.receiver == current_user.email and notification.read == False:
+            n.append(notification)
+
+    length = len(n)
+            
+
+    productcategory = Productcategories.query.filter_by(productcategoryname=category).first_or_404()
+    location = Counties.query.filter_by(name=county).first_or_404()
+    products = Products.query.filter_by(product_location=location).filter_by(product_category=productcategory).order_by(Products.date_posted.desc()).paginate(per_page=20, page=page)
+    message =  f'Showing {category} products in {county}'
+    return render_template('marketplace/index.html', categories=categories, products=products,counties=counties,
+    category=productcategory,county=location,message=message, length = length)
+
+@app.route('/postnewproduct', methods = ['GET', 'POST'])
+@login_required
+def newproduct():
+    form =PostProductForm()
+    n = []
+    notifications = Notifications.query.order_by(Notifications.date_sent.desc()).all()
+    for notification in notifications:
+        if notification.receiver == current_user.email and notification.read == False:
+            n.append(notification)
+
+    length = len(n)
+    form.category.choices = [(category.id, category.productcategoryname) for category in Productcategories.query.all()]
+    form.location.choices = [(location.id, location.name) for location in Counties.query.all()]
+    if form.validate_on_submit():
+        product = Products(title=form.title.data,category_id=form.category.data,
+        owner=current_user,location_id=form.location.data,
+        price=form.price.data,additional_details=form.additionaldetails.data,
+        )
+        db.session.add(product)
+        db.session.commit()
+        # j = Jobs.query.order_by(Jobs.id.desc()).first_or_404()
+        # check_alerts(j)
+        flash('Add images to your product', 'info')
+        return redirect(url_for('addproductimgs',id=product.id))
+    return render_template('marketplace/new-product.html', title = 'Post new product',form=form, text = 'Post a New Product', length=length)
+
+
+@app.route('/add-product-images/<int:id>', methods=['GET', 'POST'])
+@login_required
+def addproductimgs(id):
+    n = []
+    notifications = Notifications.query.order_by(Notifications.date_sent.desc()).all()
+    for notification in notifications:
+        if notification.receiver == current_user.email and notification.read == False:
+            n.append(notification)
+
+    length = len(n)
+
+    product = Products.query.get_or_404(int(id))
+    if product.owner != current_user:
+        abort(404)
+    if request.method == 'POST':
+        if 'file' not in request.files:
+            flash('No file part')
+            return redirect(request.url)
+        file = request.files['file']
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(request.url)
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            random_hex = secrets.token_hex(8)
+            _,f_ext = os.path.splitext(filename)
+            fn = random_hex + f_ext
+            file.save(os.path.join(app.config['PRODUCTS_IMAGES_FOLDER']  , fn))
+
+
+            product = Products.query.get_or_404(int(id))
+            image = Productimg(name=fn,product=product)
+            db.session.add(image)
+            db.session.commit()
+
+            return fn
+
+    return render_template('marketplace/add-images.html', product=product, length=length)
+
+
+@app.route('/product/<int:id>', methods = ['GET', 'POST'])
+@login_required
+def product(id):
+    n = []
+    notifications = Notifications.query.order_by(Notifications.date_sent.desc()).all()
+    for notification in notifications:
+        if notification.receiver == current_user.email and notification.read == False:
+            n.append(notification)
+
+    length = len(n)
+    product = Products.query.get_or_404(int(id))
+    images = []
+    imgs = product.images
+    for img in imgs:
+        images.append(img)
+    length_of_imgs = len(images)
+    now = datetime.datetime.now() 
+    time_posted = timeago.format(product.date_posted, now)
+    return render_template('marketplace/product.html', title=product.title, product = product,
+    time_posted=time_posted, length=length, length_of_imgs=length_of_imgs, imgs=imgs)
+
+@app.route('/product/<int:id>/update', methods = ['GET', 'POST'])
+@login_required
+def productupdate(id):
+    product = Products.query.get_or_404(int(id))
+    n = []
+    notifications = Notifications.query.order_by(Notifications.date_sent.desc()).all()
+    for notification in notifications:
+        if notification.receiver == current_user.email and notification.read == False:
+            n.append(notification)
+
+    length = len(n)
+    if product.owner != current_user:
+        abort(404)
+
+    form = PostProductForm()
+    form.category.choices = [(category.id, category.productcategoryname) for category in Productcategories.query.all()]
+    form.location.choices = [(location.id, location.name) for location in Counties.query.all()]
+    if form.validate_on_submit():
+        product.title = form.title.data
+        product.category_id = form.category.data
+        product.location_id = form.location.data
+        product.additional_details = form.additionaldetails.data
+        product.price = form.price.data
+        db.session.commit()
+        flash('Your product post has been updated!', 'success')
+        return redirect(url_for('addproductimgs',id = product.id))
+    elif request.method == 'GET':
+        form.title.data = product.title
+        form.category.data = product.category_id
+        form.location.data = product.location_id
+        form.additionaldetails.data = product.additional_details
+        form.price.data = product.price
+
+    return render_template('marketplace/updateproduct.html', title = 'Update product post', form = form, text = 'Update product', length=length)
+
+
+@app.route('/product/<int:id>/delete', methods = ['POST'])
+@login_required
+def deleteproduct(id):
+    product = Products.query.get_or_404(id)
+    if product.owner != current_user:
+        abort(404)
+
+    for img in product.images:
+        os.remove(os.path.join(app.config['PRODUCTS_IMAGES_FOLDER'], img.name))
+        db.session.delete(img)
+        db.session.commit()
+
+    db.session.delete(product)
+    db.session.commit()
+    flash('Your product post has been deleted!', 'success')
+    return redirect(url_for('author_products'))
+
+
+@app.route('/delete-image/<string:imgname>/<int:id>')
+@login_required
+def deleteimg(imgname, id):
+    img = Productimg.query.filter_by(name=imgname).first_or_404()
+    product = Products.query.get(int(id))
+    if product.owner != current_user:
+        abort(404)
+    os.remove(os.path.join(app.config['PRODUCTS_IMAGES_FOLDER'], img.name))
+    db.session.delete(img)
+    db.session.commit()
+    return redirect(url_for('addproductimgs', id= id))
+
+@app.route('/my-products')
+@login_required
+def author_products():
+    n = []
+    notifications = Notifications.query.order_by(Notifications.date_sent.desc()).all()
+    for notification in notifications:
+        if notification.receiver == current_user.email and notification.read == False:
+            n.append(notification)
+
+    length = len(n)
+    return render_template('marketplace/author_products.html', length=length)
+
+
+# save product
+
+@app.route('/addfavourite/<int:id>')
+@login_required
+def save_product(id):
+    product = Products.query.get_or_404(int(id))
+    if product.owner == current_user:
+        flash('You can not like your own product', 'danger')
+    current_user.saved_products.append(product)
+    db.session.commit()
+    flash('Product liked successfully', 'success')
+    return redirect(url_for('saved_products'))
+
+@app.route('/favourite-products')
+@login_required
+def saved_products():
+    n = []
+    notifications = Notifications.query.order_by(Notifications.date_sent.desc()).all()
+    for notification in notifications:
+        if notification.receiver == current_user.email and notification.read == False:
+            n.append(notification)
+
+    length = len(n)
+    products = current_user.saved_products
+    return render_template('marketplace/saved-products.html', products=products, length=length)
+

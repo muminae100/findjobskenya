@@ -66,6 +66,14 @@ class PostJobForm(FlaskForm):
     salary = StringField('Salary e.g Negotiable, Kshs.5000-Kshs.6000 or fixed price Kshs.10,000', validators=[DataRequired()])
     submit = SubmitField('Post')
 
+class PostProductForm(FlaskForm):
+    title = StringField('Product Title', validators=[DataRequired(),Length(min=5,max=150)])
+    category = SelectField(u'Category', choices=[], validators=[DataRequired()])
+    location = SelectField(u'Product location', choices=[], validators=[DataRequired()])
+    additionaldetails = StringField('Additional details(Optional)')
+    price = StringField('Estimated price(number only e.g 10,000)', validators=[DataRequired()])
+    submit = SubmitField('Next')
+
 class ProposalForm(FlaskForm):
     firstname = StringField('First Name', validators=[DataRequired()])
     lastname = StringField('Last Name', validators=[DataRequired()])

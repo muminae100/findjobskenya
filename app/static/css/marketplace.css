@@ -1,0 +1,134 @@
+.products-container{
+    display: flex;
+    flex-wrap: wrap;
+}
+.product-card {
+    /* Add shadows to create the "card" effect */
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    transition: 0.3s;
+    width: 40%;
+    border-radius: 5px;
+    margin: 20px;
+    position: relative;
+}
+#favourite-product{
+    position: absolute;
+    top: 283px;
+    right: 4px;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    border-radius: 50%;
+    z-index: 999;
+    background-color: white;
+}
+  @media screen and (max-width:600px) {
+      .product-card{
+          width: 100%;
+      }
+  }
+  
+  /* On mouse-over, add a deeper shadow */
+  .product-card:hover {
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+  }
+  
+  /* Add some padding inside the card container */
+  .product-container {
+    padding: 2px 16px;
+  }
+  .product-card img {
+    border-radius: 5px 5px 0 0;
+  }
+
+  .slideshow img {
+    vertical-align: middle;
+  }
+  
+  /* Position the image container (needed to position the left and right arrows) */
+  .slideshowcontainer {
+    position: relative;
+    width: 400px;
+  }
+  
+  /* Hide the images by default */
+  .mySlides {
+    display: none;
+    width: 400px;
+  }
+
+  .mySlides img{
+    height: 400px;
+  }
+  @media screen and (max-width:600px) {
+    .mySlides{
+      width: 100%;
+    }
+    .mySlides img{
+      height: auto;
+    }
+  }
+  
+  /* Add a pointer when hovering over the thumbnail images */
+  .cursor {
+    cursor: pointer;
+  }
+  
+  /* Next & previous buttons */
+  .prev,
+  .next {
+    cursor: pointer;
+    position: absolute;
+    top: 40%;
+    width: auto;
+    padding: 16px;
+    margin-top: -50px;
+    color: white;
+    font-weight: bold;
+    font-size: 20px;
+    border-radius: 0 3px 3px 0;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  
+  /* Position the "next button" to the right */
+  .next {
+    right: 0;
+    border-radius: 3px 0 0 3px;
+  }
+  
+  /* On hover, add a black background color with a little bit see-through */
+  .prev:hover,
+  .next:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+  }
+  
+  /* Number text (1/3 etc) */
+  .numbertext {
+    color: #f2f2f2;
+    font-size: 12px;
+    padding: 8px 12px;
+    position: absolute;
+    top: 0;
+  }
+  
+  .slideshowrow:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+  
+  /* Six columns side by side */
+  .slideshowcolumn {
+    float: left;
+    width: 25%;
+  }
+  
+  /* Add a transparency effect for thumnbail images */
+  .demo {
+    opacity: 0.6;
+    height: 100px;
+  }
+  
+  .slideshowactive,
+  .demo:hover {
+    opacity: 1;
+  }

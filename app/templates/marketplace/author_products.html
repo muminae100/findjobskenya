@@ -1,0 +1,72 @@
+{% extends "layout.html" %}
+{% block body %}
+<!-- BreadCrumb start -->
+<section class="breadcrumb-area">
+    <div class="breadcrumb-widget  pt-145 pb-125" style="background-image: url(https://images.pexels.com/photos/5728303/pexels-photo-5728303.jpeg?cs=srgb&dl=pexels-any-lane-5728303.jpg&fm=jpg);">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="breadcrumb-content pt-170">
+                        <h1>My posted products</h1>
+                        <p class="text-light"><a target="_blank"
+                            href="https://images.pexels.com/photos/5728303/pexels-photo-5728303.jpeg?cs=srgb&dl=pexels-any-lane-5728303.jpg&fm=jpg">
+                            Photo by Any Lane from Pexels
+                            <i class="fa fa-link"></i>
+                            </a>
+                        </p>
+                     
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+<!-- BreadCrumb end -->
+
+{% if not current_user.products_posted %}
+<div class="jumbotron">
+    <h3>You have not posted a product yet</h3>
+</div>
+{% endif %}
+
+<section class="pt-140 pb-140 get-touch-area bg_white">
+    <div class="container">
+        <div class="row gy-4 gy-lg-0">
+            <div class="col-lg-12">
+                <div class="contact-form-widget">
+
+                
+                    {% for product in current_user.products_posted %}
+                    <div class="job-post-widget">
+                    <div class="single-job-post me-1 wow fadeInUp mt-25">
+                        <div class="post-header">
+                            <div>
+                                <h6 class="job-title"><a href="{{ url_for('product', id=product.id) }}">{{ product.title }}</a> </h6>
+                                <div class="d-flex flex-wrap">
+                                    <div class="job-location me-lg-3 me-2"> <i class="icon_pin_alt"></i>{{ product.product_location.name }}
+                                    </div>
+                                    <div class="job-catagory"> <span>{{ product.product_category.productcategoryname }}</span> 
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="timestamp">
+                                {{ product.date_posted.strftime('%d-%m-%Y') }}
+                            </div>
+                        </div>
+                        <div class="post-content">
+                            <p>{{ product.additional_details }}</p>
+                            <p class="mt-2">Kshs. {{ product.price }}</p>
+                        </div>
+                    </div>
+                    </div>
+                    {% endfor %}
+
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

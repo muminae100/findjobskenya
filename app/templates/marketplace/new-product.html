@@ -1,0 +1,114 @@
+{% extends "layout.html" %}
+{% block body %}
+<!-- BreadCrumb start -->
+<section class="breadcrumb-area">
+    <div class="breadcrumb-widget  pt-145 pb-125" style="background-image: url(https://images.pexels.com/photos/4606336/pexels-photo-4606336.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940);">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="breadcrumb-content pt-170">
+                        <h1>{{ text }}</h1>
+                        <p class="text-light"><a target="_blank"
+                            href="https://images.pexels.com/photos/4606336/pexels-photo-4606336.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940">
+                            Photo by cottonbro from Pexels
+                            <i class="fa fa-link"></i>
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+<!-- BreadCrumb end -->
+
+<!-- start job post form -->
+<div class="container mt-5 mb-5">
+
+<div class="col-md-12">
+<div class="contact-form-widget">
+<form action="" method="POST">
+    {{ form.hidden_tag() }}
+    <div class="row">
+            <div class="section-title text-start">
+           <h2>{{ text }}</h2>
+           </div>
+           <div class="col-md-12 mt-20">
+                {{ form.title.label(class="form-control-label") }}
+                {% if form.title.errors %}
+                {{ form.title(class="form-control form-control-lg is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in form.title.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+                {% else %}
+                    {{ form.title(class="form-control form-control-lg") }}
+                {% endif %}
+            </div>
+            <div class="col-md-12 mt-20">
+                {{ form.category.label(class="form-control-label") }}
+                {% if form.category.errors %}
+                {{ form.category(class="form-control form-control-lg is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in form.category.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+                {% else %}
+                    {{ form.category(class="form-control form-control-lg") }}
+                {% endif %}
+            </div>
+            
+            <div class="col-md-12 mt-20">
+                {{ form.location.label(class="form-control-label") }}
+                {% if form.location.errors %}
+                {{ form.location(class="form-control form-control-lg is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in form.location.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+                {% else %}
+                    {{ form.location(class="form-control form-control-lg") }}
+                {% endif %}
+            </div>
+            <div class="col-md-12 mt-20">
+                {{ form.additionaldetails.label(class="form-control-label") }}
+                {% if form.additionaldetails.errors %}
+                {{ form.additionaldetails(class="form-control form-control-lg is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in form.additionaldetails.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+                {% else %}
+                    {{ form.additionaldetails(class="form-control form-control-lg") }}
+                {% endif %}
+            </div>
+           
+            <div class="col-md-12 mt-20">
+                {{ form.price.label(class="form-control-label") }}
+                {% if form.price.errors %}
+                {{ form.price(class="form-control form-control-lg is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in form.title.errors %}
+                    <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+                {% else %}
+                {{ form.price(class="form-control form-control-lg") }}
+                {% endif %}
+            </div>
+        
+        <div class="col-md-12 mt-20">
+            {{ form.submit(class="btn btn-lg btn-primary") }}
+        </div>
+    </div>
+</form>
+</div>
+
+</div>
+</div>
+{% endblock body %}

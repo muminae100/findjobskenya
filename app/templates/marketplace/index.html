@@ -68,7 +68,7 @@
                             <div class="single-sidebar-widget mt-60 widget-border">
                                 <div class="catagory-list-widget">
                                     <div class="widget-title">
-                                        <h5>Job Category</h5>
+                                        <h5>Product Category</h5>
                                     </div>
                                     <div class="widget-content ">
 
@@ -83,13 +83,13 @@
                                             {% if c == category %}
                                             <li class="catagory-item">
                                                 <span class="catagory-link active">
-                                                    <span id="active-category" class="text categoryBtn searchable">{{ c.categoryname }}</span>
+                                                    <span id="active-category" class="text categoryBtn searchable">{{ c.productcategoryname }}</span>
                                                 </span>
                                             </li>
                                             {% else %}
                                             <li class="catagory-item">
                                                 <span class="catagory-link">
-                                                    <span class="text categoryBtn searchable">{{ c.categoryname }}</span>
+                                                    <span class="text categoryBtn searchable">{{ c.productcategoryname }}</span>
                                                 </span>
                                             </li>
                                             {% endif %}
@@ -100,30 +100,6 @@
                                 </div>
                             </div>
 
-                            <div class="single-sidebar-widget mt-60 widget-border">
-                                <div class="widget-title">
-                                    <h5>Job Schedule</h5>
-                                </div>
-                                <div class="widget-content pt-20 pb-20 pr-20 pl-20">
-                                    <div class="form-check form-check-inline mr-30">
-                                        {% for schedule in schedules %}
-                                        {% if schedule == jobschedule %}
-                                        <input class="form-check-input radiobtns" type="radio" name="schedule"
-                                            id="{{ schedule.schedulename }}" value="{{ schedule.schedulename }}" checked>
-                                        
-                                        <label class="form-check-label" for="{{ schedule.schedulename }}">{{ schedule.schedulename }}</label>
-                                        <br>
-                                        {% else %}
-                                        <input class="form-check-input radiobtns" type="radio" name="schedule"
-                                            id="{{ schedule.schedulename }}" value="{{ schedule.schedulename }}">
-                                        
-                                        <label class="form-check-label" for="{{ schedule.schedulename }}">{{ schedule.schedulename }}</label>
-                                        <br>
-                                        {% endif %}
-                                        {% endfor %}
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </div>
 
@@ -132,7 +108,7 @@
                         <div class="job-post-widget">
                             <div class="sidebar-header d-flex justify-content-between align-items-center mt-4 mt-lg-0">
                                 <div class="sidebar-title">
-                                    <h4 class="wow fadeInRight">{{ jobs.total }} job(s) you might like</h4>
+                                    <h4 class="wow fadeInRight">{{ products.total }} product(s) you might like</h4>
                                 </div>
 
                                 <div class="sorting-select wow fadeInLeft me-1">
@@ -142,46 +118,35 @@
                                 </div>
                             </div>
 
-                            {% for job in jobs.items %}
-                            {% if job.active == True %}
-                            <div class="single-job-post me-1 wow fadeInUp mt-25">
-                                <div class="post-header">
-                                    <div>
-                                        <h6 class="job-title"><a href="{{ url_for('job', id=job.id) }}">{{ job.title }}</a> </h6>
-                                        <div class="d-flex flex-wrap">
-                                            <div class="job-location me-lg-3 me-2"> <i class="icon_pin_alt"></i>{{ job.location.name }}
-                                            </div>
-                                            <div class="job-catagory"> <span>{{ job.category.categoryname }}</span> | {{ job.schedule.schedulename }}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="timestamp">
-                                        {{ job.date_posted.strftime('%d-%m-%Y') }}
-                                    </div>
-                                </div>
-                                <div class="post-content">
-                                    <p>{{ job.job_responsibilities }}</p>
-                                </div>
-                                <div class="post-content">
-                                    <p style="font-weight: bold;">Salary</p>
-                                    <p>{{ job.salary }}</p>
-                                </div>
-                                <div class="post-content">
-                                    <div>
-                                        <a href="tel:{{ job.author.phone_number }}">
-                                            <i class="fa fa-phone p-2"></i>
+                            <div class="products-container">
+                            {% for product in products.items %}
+                            
+                            <div class="product-card">
+                                <img src="{{ url_for('static', filename='img/marketplace/')}}{{product.images[0].name}}" alt="" style="width:100%;height: 300px;">
+                                <div class="product-container">
+                                <a href="{{ url_for('product', id=product.id) }}">
+                                  <p><b>{{ product.title }}</b></p>
+                                </a>
+                                  <p>Kshs. {{ product.price }}</p>
+                                  <div class="mt-2 mb-2">
+                                        <a class="pr-2 pt-2 pb-2" href="{{ product.owner.phone }}">
+                                            <i class="fa fa-phone"></i>
                                         </a>
-                                        <a href="mailto:{{ job.author.email }}">
-                                            <i class="fa fa-envelope p-2"></i>
+                                        <a class="p-2" href="{{ product.owner.email }}">
+                                            <i class="fa fa-envelope"></i>
                                         </a>
-                                    </div>
+                                  </div>
+                                </div>
+                                <div id="favourite-product">
+                                    <i style="font-size: 24px;" class="fa fa-heart p-1 text-danger"></i>
                                 </div>
                             </div>
-                            {% endif %}
+                            
                             {% endfor %}
-                            {% for page_num in jobs.iter_pages(left_edge=1,right_edge=1,left_current=1,right_current=2) %}
+                            </div>
+                            {% for page_num in products.iter_pages(left_edge=1,right_edge=1,left_current=1,right_current=2) %}
                                 {% if page_num %}
-                                    {% if jobs.page == page_num %}
+                                    {% if products.page == page_num %}
                                     <button class="btn btn-primary mb-2 mt-3 active-page">{{ page_num }}</button>
                                     {% else %}
                                     <button class="btn btn-outline-primary mb-2 mt-3">{{ page_num }}</button>
@@ -193,7 +158,7 @@
                         </div>
 
                         <div class="email-alert-widget bg_white mt-100 wow fadeInUp">
-                            <h4>Get email alerts for the latest Jobs in Kenya</h4>
+                            <h4>Get email alerts for the latest products to be posted in Kenya</h4>
                             <p>You can cancel email alerts at any time.</p>
 
                             <button class="theme-btn theme-btn-lg mt-3" data-bs-toggle="modal"
@@ -207,20 +172,20 @@
                                     <div class="modal-content">
                                         <div class="modal-body">
                                             <div>
-                                                <h4 class="job-title">Get email alerts for the latest Jobs in Kenya</h4>
+                                                <h4 class="job-title">Get email alerts for the latest Products to be posted in Kenya</h4>
                                                 <p>You can cancel email alerts at any time.</p>
                                             </div>
 
-                            <form action="{{ url_for('job_alerts') }}" method="post">
+                            <form action="#" method="post">
                                 <div class="row gy-4 mt-4">
                             <div class="col-md-6">
-                                <label style="text-align: left;" class="label" for="category">Category</label>
+                                <label style="text-align: left;" class="label" for="category">Product Category</label>
                                 <select name="category" class="form-control">
                                     {% for c in categories.items %}
                                     {% if c == category %}
-                                    <option value="{{ c.categoryname }}" selected>{{ c.categoryname }}</option>
+                                    <option value="{{ c.categoryname }}" selected>{{ c.productcategoryname }}</option>
                                     {% else %}
-                                    <option value="{{ c.categoryname }}">{{ c.categoryname }}</option>
+                                    <option value="{{ c.categoryname }}">{{ c.productcategoryname }}</option>
                                     {% endif %}
                                     {% endfor %}
                                 </select> 
@@ -239,19 +204,7 @@
                                     {% endfor %}
                                 </select>
                             </div>
-                         
-                            <div class="col-md-6">
-                                <label style="text-align: left;" class="label" for="schedule">Job Schedule</label>
-                                <select name="schedule" class="form-control">
-                                    {% for s in schedules %}
-                                    {% if s == jobschedule %}
-                                    <option value="{{ s.schedulename }}" selected>{{ s.schedulename }}</option>
-                                    {% else %}
-                                    <option value="{{ s.schedulename }}">{{ s.schedulename }}</option>
-                                    {% endif %}
-                                    {% endfor %}
-                                </select>
-                            </div>
+                        
                             <div class="col-12">
                                
                                 <div class="d-flex justify-content-between">
