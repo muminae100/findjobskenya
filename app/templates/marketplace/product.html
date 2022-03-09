@@ -54,28 +54,31 @@
                                     <div class="widget-title">
                                         <h5>Posted by {{ product.owner.username }}</h5>
                                     </div>
-                                    <div class="widget-content ">
+                                    <div class="widget-content p-3">
                                         <p><b>Contact Details</b></p>
                                         <div class="mt-2 mb-2">
-                                            <a class="pr-2 pt-2 pb-2" href="{{ product.owner.phone }}">
-                                                <i class="fa fa-phone"></i>
+                                            <a class="pr-2 pt-2 pb-2" href="tel:{{ product.owner.phone }}">
+                                                <i style="font-size: 22px;" class="fa fa-phone"></i>
                                             </a>
-                                            <a class="p-2" href="{{ product.owner.email }}">
-                                                <i class="fa fa-envelope"></i>
+                                            <a class="p-2" href="mailto:{{ product.owner.email }}">
+                                                <i style="font-size: 24px;" class="fa fa-envelope"></i>
+                                            </a>
+                                            <a class="p-2" href="{{ product.owner.phone }}">
+                                                <i style="font-size: 24px;" class="fab fa-whatsapp"></i>
                                             </a>
                                       </div>
                                     </div>
-                                    <div class="widget-content ">
+                                    <div class="widget-content p-3">
                                         <p><b>Social Media</b></p>
                                         <div class="mt-2 mb-2">
-                                            <a class="pr-2 pt-2 pb-2" href="{{ product.owner.instagram }}">
-                                                <i class="fa fa-instagram"></i>
+                                            <a class="pr-2 pt-2 pb-2" target="_blank" href="{{ product.owner.instagram }}">
+                                                <i style="font-size: 24px;" class="fab fa-instagram"></i>
                                             </a>
-                                            <a class="p-2" href="{{ product.owner.facebook }}">
-                                                <i class="fa fa-facebook"></i>
+                                            <a class="p-2" target="_blank" href="{{ product.owner.facebook }}">
+                                                <i style="font-size: 24px;" class="fab fa-facebook"></i>
                                             </a>
-                                            <a class="p-2" href="{{ product.owner.twitter }}">
-                                                <i class="fa fa-twitter"></i>
+                                            <a class="p-2" target="_blank" href="{{ product.owner.twitter }}">
+                                                <i style="font-size: 24px;" class="fab fa-twitter"></i>
                                             </a>
                                       </div>
                                     </div>
@@ -88,7 +91,7 @@
                                     <div class="widget-title">
                                         <h5>Safety tips</h5>
                                     </div>
-                                    <div class="widget-content ">
+                                    <div class="widget-content p-3">
                                         <ul class="catagory-list py-3">
                                             <li class="catagory-item ">Remember, don't send any pre-payments</li>
                                             <li class="catagory-item ">Meet the seller at a safe public place</li>
@@ -102,9 +105,13 @@
                             
                             <div class="single-sidebar-widget mt-60 widget-border">
                                 <div class="catagory-list-widget">
-                                    <div class="widget-content ">
+                                    <div class="widget-content p-3">
                                         <div>
-                                            <a href="#" class="btn btn-outline-primary">Post a product</a>
+                                            {% if product.owner == current_user %}
+                                            <a href="{{ url_for('newproduct') }}" class="btn btn-outline-primary">Post another product</a>
+                                            {% else %}
+                                            <a href="{{ url_for('newproduct') }}" class="btn btn-outline-primary">Post your own product</a>
+                                            {% endif %}
                                         </div>
                                     </div>
                                 </div>

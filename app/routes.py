@@ -961,6 +961,67 @@ def market_place():
     return render_template('marketplace/index.html', categories=categories, products=products,counties=counties,
     category=productcategory,county=location,message=message, length = length)
 
+
+def send_product_alert_email(product, email):
+    msg = Message('Product/service alert', 
+                   sender='smuminaetx100@gmail.com',
+                   recipients=[email])
+    msg.body = f'''A new product/service has been posted:
+
+    {product.title}
+    {product.product_category.productcategoryname}
+    {product.product_location.name}
+    {product.additional_details}
+    Price:
+    {product.price}
+    Date posted:
+    {product.date_posted}
+    Posted by 
+    {product.owner.username}
+    Contact details:
+    {product.owner.email}
+    {product.owner.phone_number}
+
+    You can view the product/service in our website using the link below:
+    {url_for('product',id=product.id,_external = True)}
+
+'''
+    mail.send(msg)
+
+
+def send_product_notification(p, receiver):
+    s = Users.query.filter_by(email=p.owner.email).first_or_404()
+    r = Users.query.filter_by(email=receiver).first_or_404()
+    message = f'''
+    A new product/service has been posted by {p.owner.username}
+    Details:
+    {p.title}
+    {p.product_category.productcategoryname}
+    {p.product_location.name}
+    {p.additional_details}
+    Price:
+    {p.price}
+    Date posted:
+    {p.date_posted}
+    Posted by 
+    {p.owner.username}
+    Contact details:
+    {p.owner.email}
+    {p.owner.phone_number}
+    '''
+    
+    notification = Notifications(sender=s.email, receiver=r.email, message=message)
+    db.session.add(notification)
+    db.session.commit()
+
+def check_product_alerts(p):
+    alerts = Productalerts.query.filter_by(category=p.product_category.productcategoryname).filter_by(county=p.product_location.name).all()
+    if alerts:
+        for alert in alerts:
+            send_product_alert_email(p, alert.email)
+            send_product_notification(p, alert.email)
+
+
 @app.route('/postnewproduct', methods = ['GET', 'POST'])
 @login_required
 def newproduct():
@@ -981,9 +1042,9 @@ def newproduct():
         )
         db.session.add(product)
         db.session.commit()
-        # j = Jobs.query.order_by(Jobs.id.desc()).first_or_404()
-        # check_alerts(j)
-        flash('Add images to your product', 'info')
+        p = Products.query.order_by(Products.id.desc()).first_or_404()
+        check_product_alerts(p)
+        flash('Add images to your product/service', 'info')
         return redirect(url_for('addproductimgs',id=product.id))
     return render_template('marketplace/new-product.html', title = 'Post new product',form=form, text = 'Post a New Product', length=length)
 
@@ -1073,7 +1134,7 @@ def productupdate(id):
         product.additional_details = form.additionaldetails.data
         product.price = form.price.data
         db.session.commit()
-        flash('Your product post has been updated!', 'success')
+        flash('Your product/service post has been updated!', 'success')
         return redirect(url_for('addproductimgs',id = product.id))
     elif request.method == 'GET':
         form.title.data = product.title
@@ -1099,7 +1160,7 @@ def deleteproduct(id):
 
     db.session.delete(product)
     db.session.commit()
-    flash('Your product post has been deleted!', 'success')
+    flash('Your product/service post has been deleted!', 'success')
     return redirect(url_for('author_products'))
 
 
@@ -1138,7 +1199,7 @@ def save_product(id):
         flash('You can not like your own product', 'danger')
     current_user.saved_products.append(product)
     db.session.commit()
-    flash('Product liked successfully', 'success')
+    flash('Product/service liked successfully', 'success')
     return redirect(url_for('saved_products'))
 
 @app.route('/favourite-products')
@@ -1154,3 +1215,19 @@ def saved_products():
     products = current_user.saved_products
     return render_template('marketplace/saved-products.html', products=products, length=length)
 
+@app.route('/create_alert', methods = ['POST'])
+@login_required
+def product_alerts():
+    category = request.form.get('category')
+    county = request.form.get('county')
+    c = Productcategories.query.filter_by(productcategoryname=category).first_or_404()
+    l = Counties.query.filter_by(name=county).first_or_404()
+    email = current_user.email
+
+    alert = Productalerts(email=email, category=c.productcategoryname,county=l.name)
+    db.session.add(alert)
+    db.session.commit()
+
+    flash(f'You product/service alert has been set successfully', 'secondary')
+
+    return redirect(url_for('market_place'))
