@@ -35,7 +35,9 @@ def index():
     schedule = request.args.get('schedule', 'Full-time', type=str)
     category = request.args.get('category', 'House help', type=str)
     county = request.args.get('county', 'Nairobi', type=str)
-    categories = Categories.query.paginate()
+    categories = Categories.query.limit(10).all()
+    more_categories = Categories.query.offset(10).all()
+    total_categories = len(categories) + len(more_categories)
     counties = Counties.query.all()
     schedules = Jobschedule.query.all()
 
@@ -54,7 +56,8 @@ def index():
     jobs = Jobs.query.filter_by(schedule=jobschedule).filter_by(location=location).filter_by(category=jobcategory).order_by(Jobs.date_posted.desc()).paginate(per_page=20, page=page)
     message =  f'Showing {category} {schedule} jobs in {county}'
     return render_template('jobs/index.html', categories=categories, jobs=jobs, schedules=schedules,counties=counties,
-    category=jobcategory,jobschedule=jobschedule,county=location,message=message, length = length)
+    category=jobcategory,jobschedule=jobschedule,county=location,message=message, length = length,more_categories=more_categories,
+    total_categories=total_categories)
 
 @app.route('/login', methods = ['GET','POST'])
 def login():
@@ -942,7 +945,9 @@ def market_place():
     page = request.args.get('page', 1, type=int)
     category = request.args.get('category', 'Fashion', type=str)
     county = request.args.get('county', 'Nairobi', type=str)
-    categories = Productcategories.query.paginate()
+    categories = Productcategories.query.limit(10).all()
+    more_categories = Productcategories.query.offset(10).all()
+    total_categories = len(categories) + len(more_categories)
     counties = Counties.query.all()
 
     n = []
@@ -959,7 +964,7 @@ def market_place():
     products = Products.query.filter_by(product_location=location).filter_by(product_category=productcategory).order_by(Products.date_posted.desc()).paginate(per_page=20, page=page)
     message =  f'Showing {category} products in {county}'
     return render_template('marketplace/index.html', categories=categories, products=products,counties=counties,
-    category=productcategory,county=location,message=message, length = length)
+    category=productcategory,county=location,message=message, length = length,more_categories=more_categories,total_categories=total_categories)
 
 
 def send_product_alert_email(product, email):
@@ -1197,6 +1202,8 @@ def save_product(id):
     product = Products.query.get_or_404(int(id))
     if product.owner == current_user:
         flash('You can not like your own product', 'danger')
+    if product in current_user.saved_products:
+        flash('You already liked this product', 'info')
     current_user.saved_products.append(product)
     db.session.commit()
     flash('Product/service liked successfully', 'success')
@@ -1230,4 +1237,13 @@ def product_alerts():
 
     flash(f'You product/service alert has been set successfully', 'secondary')
 
+    return redirect(url_for('market_place'))
+
+@app.route('/add_category', methods = ['POST'])
+@login_required
+def add_category():
+    category = request.form.get('category')
+    c = Productcategories(productcategoryname=category)
+    db.session.add(c)
+    db.session.commit()
     return redirect(url_for('market_place'))

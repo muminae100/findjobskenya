@@ -49,6 +49,13 @@
           $('.categoryBtn').click(function(){
             window.location.href = '/' + '?schedule=' + $('input[name="schedule"]:checked').val() + '&category=' + $(this).text() + '&county=' + $('#locationSelect').find(":selected").text() + '&page=' + page;
           });
+
+          $("#locationSelection").change(function(e){
+            window.location.href = '/marketplace' + '?category=' + $('#active-category').text() + '&county=' + $(this).val() + '&page=' + page;
+          });
+          $('.categoryBtn1').click(function(){
+            window.location.href = '/marketplace' + '?category=' + $(this).text() + '&county=' + $('#locationSelection').find(":selected").text() + '&page=' + page;
+          });
         });
     </script>
 </head>

@@ -76,10 +76,10 @@
                                             <li class="catagory-item ">
                                                 <a href="#" class="catagory-link">
                                                     <span class="text">All Categories</span>
-                                                    <span class="number">({{ categories.total }})</span>
+                                                    <span class="number">({{ total_categories }})</span>
                                                 </a>
                                             </li>
-                                            {% for c in categories.items %}
+                                            {% for c in categories %}
                                             {% if c == category %}
                                             <li class="catagory-item">
                                                 <span class="catagory-link active">
@@ -94,6 +94,35 @@
                                             </li>
                                             {% endif %}
                                             {% endfor %}
+                                            <li class="catagory-item">
+                                                <span class="catagory-link">
+                                                    <span id="dots" class="text">...</span>
+                                                </span>
+                                            </li>    
+                                            <span id="more">
+                                            {% for c in more_categories %}
+                                            {% if c == category %}
+                                            <li class="catagory-item">
+                                                <span class="catagory-link active">
+                                                    <span id="active-category" class="text categoryBtn searchable">{{ c.categoryname }}</span>
+                                                </span>
+                                            </li>
+                                            {% else %}
+                                            <li class="catagory-item">
+                                                <span class="catagory-link">
+                                                    <span class="text categoryBtn searchable">{{ c.categoryname }}</span>
+                                                </span>
+                                            </li>
+                                            {% endif %}
+                                            {% endfor %}
+                                            </span>
+                                            <li class="catagory-item">
+                                                <span class="catagory-link">
+                                                    <button style="text-decoration: underline;color: blue;" onclick="showMoreCategoriesFunction()" id="showMoreCategoriesBtn" class="text btn">
+                                                        Show more...
+                                                    </button>
+                                                </span>
+                                            </li>
                                         </ul>
 
                                     </div>
