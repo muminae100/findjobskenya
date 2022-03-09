@@ -35,6 +35,7 @@ def index():
     schedule = request.args.get('schedule', 'Full-time', type=str)
     category = request.args.get('category', 'House help', type=str)
     county = request.args.get('county', 'Nairobi', type=str)
+    all_categories = Categories.query.all()
     categories = Categories.query.limit(10).all()
     more_categories = Categories.query.offset(10).all()
     total_categories = len(categories) + len(more_categories)
@@ -54,10 +55,12 @@ def index():
     jobschedule = Jobschedule.query.filter_by(schedulename=schedule).first_or_404()
     location = Counties.query.filter_by(name=county).first_or_404()
     jobs = Jobs.query.filter_by(schedule=jobschedule).filter_by(location=location).filter_by(category=jobcategory).order_by(Jobs.date_posted.desc()).paginate(per_page=20, page=page)
+    j = jobs.query.filter_by(active=True).all()
+    jobs_length = len(j)
     message =  f'Showing {category} {schedule} jobs in {county}'
     return render_template('jobs/index.html', categories=categories, jobs=jobs, schedules=schedules,counties=counties,
     category=jobcategory,jobschedule=jobschedule,county=location,message=message, length = length,more_categories=more_categories,
-    total_categories=total_categories)
+    total_categories=total_categories,jobs_length=jobs_length,all_categories=all_categories)
 
 @app.route('/login', methods = ['GET','POST'])
 def login():
@@ -945,6 +948,7 @@ def market_place():
     page = request.args.get('page', 1, type=int)
     category = request.args.get('category', 'Fashion', type=str)
     county = request.args.get('county', 'Nairobi', type=str)
+    all_categories = Productcategories.query.all()
     categories = Productcategories.query.limit(10).all()
     more_categories = Productcategories.query.offset(10).all()
     total_categories = len(categories) + len(more_categories)
@@ -964,7 +968,8 @@ def market_place():
     products = Products.query.filter_by(product_location=location).filter_by(product_category=productcategory).order_by(Products.date_posted.desc()).paginate(per_page=20, page=page)
     message =  f'Showing {category} products in {county}'
     return render_template('marketplace/index.html', categories=categories, products=products,counties=counties,
-    category=productcategory,county=location,message=message, length = length,more_categories=more_categories,total_categories=total_categories)
+    category=productcategory,county=location,message=message, length = length,more_categories=more_categories,
+    total_categories=total_categories,all_categories=all_categories)
 
 
 def send_product_alert_email(product, email):
@@ -1027,6 +1032,23 @@ def check_product_alerts(p):
             send_product_notification(p, alert.email)
 
 
+@app.route('/create_alert', methods = ['POST'])
+@login_required
+def product_alert():
+    category = request.form.get('category')
+    county = request.form.get('county')
+    c = Productcategories.query.filter_by(productcategoryname=category).first_or_404()
+    l = Counties.query.filter_by(name=county).first_or_404()
+    email = current_user.email
+
+    alert = Productalerts(email=email, category=c.productcategoryname,county=l.name)
+    db.session.add(alert)
+    db.session.commit()
+
+    flash(f'Your alert has been set successfully', 'info')
+
+    return redirect(url_for('market_place'))
+
 @app.route('/postnewproduct', methods = ['GET', 'POST'])
 @login_required
 def newproduct():
@@ -1051,7 +1073,7 @@ def newproduct():
         check_product_alerts(p)
         flash('Add images to your product/service', 'info')
         return redirect(url_for('addproductimgs',id=product.id))
-    return render_template('marketplace/new-product.html', title = 'Post new product',form=form, text = 'Post a New Product', length=length)
+    return render_template('marketplace/new-product.html', title = 'Post new product/service',form=form, text = 'Post a New Product/Service', length=length)
 
 
 @app.route('/add-product-images/<int:id>', methods=['GET', 'POST'])
@@ -1222,28 +1244,16 @@ def saved_products():
     products = current_user.saved_products
     return render_template('marketplace/saved-products.html', products=products, length=length)
 
-@app.route('/create_alert', methods = ['POST'])
-@login_required
-def product_alerts():
-    category = request.form.get('category')
-    county = request.form.get('county')
-    c = Productcategories.query.filter_by(productcategoryname=category).first_or_404()
-    l = Counties.query.filter_by(name=county).first_or_404()
-    email = current_user.email
 
-    alert = Productalerts(email=email, category=c.productcategoryname,county=l.name)
-    db.session.add(alert)
-    db.session.commit()
 
-    flash(f'You product/service alert has been set successfully', 'secondary')
-
-    return redirect(url_for('market_place'))
-
-@app.route('/add_category', methods = ['POST'])
-@login_required
-def add_category():
-    category = request.form.get('category')
-    c = Productcategories(productcategoryname=category)
-    db.session.add(c)
-    db.session.commit()
-    return redirect(url_for('market_place'))
+# admin
+# @app.route('/add_category', methods = ['POST'])
+# @login_required
+# def add_category():
+#     if current_user.admin != True:
+#         abort(404)
+#     category = request.form.get('category')
+#     c = Productcategories(productcategoryname=category)
+#     db.session.add(c)
+#     db.session.commit()
+#     return redirect(url_for('market_place'))

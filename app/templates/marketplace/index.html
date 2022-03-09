@@ -196,13 +196,6 @@
                                     ...
                                 {% endif %}
                             {% endfor %}
-                            <div class="mt-3">
-                                <form action="{{ url_for('add_category') }}" method="POST">
-                                    <label for="category">Add category</label><br>
-                                    <input name="category" type="text">
-                                    <button class="btn btn-primary mt-2">Add</button>
-                                </form>
-                            </div>
                         </div>
 
                         <div class="email-alert-widget bg_white mt-100 wow fadeInUp">
@@ -224,16 +217,16 @@
                                                 <p>You can cancel email alerts at any time.</p>
                                             </div>
 
-                            <form action="{{ url_for('product_alerts') }}" method="post">
+                            <form action="{{ url_for('product_alert') }}" method="POST">
                                 <div class="row gy-4 mt-4">
                             <div class="col-md-6">
-                                <label style="text-align: left;" class="label" for="category">Product Category</label>
+                                <label style="text-align: left;" class="label" for="category">Category</label>
                                 <select name="category" class="form-control">
-                                    {% for c in categories.items %}
+                                    {% for c in all_categories %}
                                     {% if c == category %}
-                                    <option value="{{ c.categoryname }}" selected>{{ c.productcategoryname }}</option>
+                                    <option value="{{ c.productcategoryname }}" selected>{{ c.productcategoryname }}</option>
                                     {% else %}
-                                    <option value="{{ c.categoryname }}">{{ c.productcategoryname }}</option>
+                                    <option value="{{ c.productcategoryname }}">{{ c.productcategoryname }}</option>
                                     {% endif %}
                                     {% endfor %}
                                 </select> 
