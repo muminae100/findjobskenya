@@ -8,13 +8,6 @@
                 <div class="col-md-12">
                     <div class="breadcrumb-content pt-170">
                         <h1>My saved jobs</h1>
-                        <p class="text-light"><a target="_blank"
-                            href="https://images.pexels.com/photos/5728303/pexels-photo-5728303.jpeg?cs=srgb&dl=pexels-any-lane-5728303.jpg&fm=jpg">
-                            Photo by Any Lane from Pexels
-                            <i class="fa fa-link"></i>
-                            </a>
-                        </p>
-                     
                     </div>
                 </div>
             </div>
@@ -24,7 +17,7 @@
 </section>
 <!-- BreadCrumb end -->
 
-{% if not jobs %}
+{% if length_of_jobs == 0 %}
 <div class="jumbotron">
     <h3>You have not saved a job yet</h3>
 </div>

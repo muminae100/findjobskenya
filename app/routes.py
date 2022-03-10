@@ -352,10 +352,14 @@ def author_jobs(username):
 
     length = len(n)
     user = Users.query.filter_by(username=username).first_or_404()
+    j = []
     jobs = Jobs.query.filter_by(author=user)\
         .order_by(Jobs.date_posted.desc())\
         .all()
-    return render_template('jobs/user-jobs.html',jobs = jobs, length=length)
+    for job in jobs:
+        j.append(job)
+    length_of_jobs = len(j)
+    return render_template('jobs/user-jobs.html',jobs = jobs, length=length,length_of_jobs=length_of_jobs)
 
 
 def send_reset_email(user):
@@ -444,8 +448,13 @@ def saved_jobs():
             n.append(notification)
 
     length = len(n)
+
+    j = []
     jobs = current_user.saved_jobs
-    return render_template('jobs/saved-jobs.html', jobs=jobs, length=length)
+    for job in jobs:
+        j.append(job)
+    length_of_jobs = len(j)
+    return render_template('jobs/saved-jobs.html', jobs=jobs, length=length,length_of_jobs=length_of_jobs)
 
 
 
@@ -1132,6 +1141,9 @@ def product(id):
     for img in imgs:
         images.append(img)
     length_of_imgs = len(images)
+    if product.owner == current_user and length_of_imgs == 0:
+        flash('Product/service must have at least one image!', 'info')
+        return redirect(url_for('addproductimgs', id= product.id))
     now = datetime.datetime.now() 
     time_posted = timeago.format(product.date_posted, now)
     return render_template('marketplace/product.html', title=product.title, product = product,
@@ -1257,3 +1269,26 @@ def saved_products():
 #     db.session.add(c)
 #     db.session.commit()
 #     return redirect(url_for('market_place'))
+
+
+@app.errorhandler(404)
+def page_not_found(e):
+    n = []
+    notifications = Notifications.query.order_by(Notifications.date_sent.desc()).all()
+    for notification in notifications:
+        if notification.receiver == current_user.email and notification.read == False:
+            n.append(notification)
+
+    length = len(n)
+    return render_template('404.html', length=length), 404
+
+@app.errorhandler(500)
+def internal_error(error):
+    n = []
+    notifications = Notifications.query.order_by(Notifications.date_sent.desc()).all()
+    for notification in notifications:
+        if notification.receiver == current_user.email and notification.read == False:
+            n.append(notification)
+
+    length = len(n)
+    return render_template('500.html', length=length), 500

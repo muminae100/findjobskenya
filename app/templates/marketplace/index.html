@@ -2,19 +2,12 @@
 {% block body %}
         <!-- BreadCrumb start -->
         <section class="breadcrumb-area">
-            <div class="breadcrumb-widget  pt-145 pb-125" style="background-image: url(https://images.pexels.com/photos/8486978/pexels-photo-8486978.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940);">
+            <div class="breadcrumb-widget  pt-145 pb-125" style="background-image: url(https://images.pexels.com/photos/1457842/pexels-photo-1457842.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500);">
                 <div class="container">
                     <div class="row">
                         <div class="col-md-12">
                             <div class="breadcrumb-content pt-170">
-                                <h1>Hi there,</h1>
-                                <h1>{{ current_user.username }}</h1>
-                                <p class="text-light"><a target="_blank"
-                                    href="https://images.pexels.com/photos/8486978/pexels-photo-8486978.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940">
-                                    Photo by Kindel Media from Pexels
-                                    <i class="fa fa-link"></i>
-                                    </a>
-                                </p>
+                                <h1>Market place.</h1>
                             </div>
                         </div>
                     </div>
@@ -162,13 +155,13 @@
                                   <p>Kshs. {{ product.price }}</p>
                                   <div class="mt-2 mb-2">
                                         <a class="pr-2 pt-2 pb-2" href="tel:{{ product.owner.phone }}">
-                                            <i style="font-size: 20px;" class="fa fa-phone"></i>
+                                            <i style="font-size: 20px;color: #4285F4;" class="fa fa-phone"></i>
                                         </a>
                                         <a class="p-2" href="mailto:{{ product.owner.email }}">
-                                            <i style="font-size: 22px;" class="fa fa-envelope"></i>
+                                            <i style="font-size: 22px;" class="fa fa-envelope text-secondary"></i>
                                         </a>
                                         <a class="p-2" href="{{ product.owner.phone }}">
-                                            <i style="font-size: 24px;" class="fab fa-whatsapp"></i>
+                                            <i style="font-size: 24px;color: #25D366;" class="fab fa-whatsapp"></i>
                                         </a>
                                   </div>
                                 </div>

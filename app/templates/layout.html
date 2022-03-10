@@ -61,7 +61,6 @@
 </head>
 
 <body onload="myFunction();" data-spy="scroll" data-offset="70">
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <!-- Preloader -->
     <div id="preloader">
         <div id="ctn-preloader" class="ctn-preloader">
@@ -95,7 +94,7 @@
                             <span><i style="font-size: 25px;" class="fa fa-bell text-secondary"></i></span>
                         </a>
                         {% endif %}
-                        <img class="rounded-circle ml-3" width="35" height="35" src="../static/img/profile-imgs/{{ current_user.profile_pic }}">
+                        <img class="rounded-circle ml-3" width="35" height="35" src="{{ url_for('static', filename = 'img/profile-imgs/') }}{{ current_user.profile_pic }}">
                     </div>
                     <button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse"
                         data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
@@ -113,20 +112,27 @@
                         </span>
                     </button>
                     {% else %}
-                    <span class="collapsed-items">
-                        <a class="nav-link sticky_logo text-secondary" href="{{ url_for('login') }}">
-                            Login
-                        </a>
-                        <a class="nav-link sticky_logo text-secondary"  href="{{ url_for('register') }}">
-                            Register
-                        </a>
-                    </span>
+                    <button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="menu_toggle">
+                            <span class="hamburger">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </span>
+                            <span class="hamburger-cross">
+                                <span></span>
+                                <span></span>
+                            </span>
+                        </span>
+                    </button>
                     {% endif %}
 
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
                         <ul class="navbar-nav menu ms-auto">
                             <li class="nav-item submenu ">
-                                <a href="{{ url_for('index') }}" class="nav-link active"
+                                <a href="{{ url_for('index') }}" class="nav-link"
                                     >Home</a>
                             </li>
                             <li class="nav-item dropdown submenu">
@@ -151,7 +157,7 @@
                             </li>
                             {% if current_user.is_authenticated %}
                             <li class="nav-item dropdown submenu">
-                                <a class="nav-link dropdown-toggle" href="{{ url_for('index') }}" role="button"
+                                <a class="nav-link dropdown-toggle" href="#" role="button"
                                     data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     Find work
                                 </a>
@@ -209,7 +215,7 @@
                             </li>
                             <li id="profile-img" class="nav-item submenu">
                                 <a href="#" class="navbar-brand">
-                                <img class="rounded-circle" width="35" height="35" src="../static/img/profile-imgs/{{ current_user.profile_pic }}">
+                                <img class="rounded-circle" width="35" height="35" src="{{ url_for('static', filename = 'img/profile-imgs/') }}{{ current_user.profile_pic }}">
                                 </a>
                             </li>
                             {% else %}

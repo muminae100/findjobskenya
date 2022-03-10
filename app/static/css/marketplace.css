@@ -66,17 +66,12 @@
     }
   }
   
-  /* Add a pointer when hovering over the thumbnail images */
-  .cursor {
-    cursor: pointer;
-  }
-  
   /* Next & previous buttons */
   .prev,
   .next {
     cursor: pointer;
     position: absolute;
-    top: 40%;
+    top: 50%;
     width: auto;
     padding: 16px;
     margin-top: -50px;
@@ -98,38 +93,7 @@
   .prev:hover,
   .next:hover {
     background-color: rgba(0, 0, 0, 0.8);
+    color: white;
   }
   
-  /* Number text (1/3 etc) */
-  .numbertext {
-    color: #f2f2f2;
-    font-size: 12px;
-    padding: 8px 12px;
-    position: absolute;
-    top: 0;
-  }
-  
-  .slideshowrow:after {
-    content: "";
-    display: table;
-    clear: both;
-  }
-  
-  /* Six columns side by side */
-  .slideshowcolumn {
-    float: left;
-    width: 25%;
-  }
-  
-  /* Add a transparency effect for thumnbail images */
-  .demo {
-    opacity: 0.6;
-    height: 100px;
-  }
-  
-  .slideshowactive,
-  .demo:hover {
-    opacity: 1;
-  }
-
   #more {display: none;}

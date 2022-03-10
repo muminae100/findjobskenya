@@ -1,33 +1,30 @@
 {% extends "layout.html" %}
 {% block body %}
-<!-- BreadCrumb start -->
-<section class="breadcrumb-area">
-    <div class="breadcrumb-widget  pt-145 pb-125" style="background-image: url(../static/img/breadcrumb/bg-2.png);">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="breadcrumb-content pt-170">
-                        <h1>404 NOT FOUND</h1>
-                        <p>🧐</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-</section>
-<!-- BreadCrumb end -->
-
-<section class="pt-140 pb-140 get-touch-area bg_white">
+ <!-- Error start -->
+ <section class="error_area bg_color pb-50 overflow-hidden">
+    <div class="error_dot one"></div>
+    <div class="error_dot two"></div>
+    <div class="error_dot three"></div>
+    <div class="error_dot four"></div>
     <div class="container">
-        <div class="row gy-4 gy-lg-0">
-            <div class="col-lg-12">
-                <div class="contact-form-widget">
-
-
-                </div>
+        <div class="error_content_two text-center">
+            <div class="error_img">
+                <img class="position-absolute error_shap" src="{{ url_for('static', filename='img/error/404_bg.png') }}" alt="">
+                <div class="one wow clipInDown" data-wow-delay="1s"><img class="img_one"
+                        src="{{ url_for('static', filename='img/error/404_two.png') }}" alt=""></div>
+                <div class="two wow clipInDown" data-wow-delay="1.5s"><img class="img_two"
+                        src="{{ url_for('static', filename='img/error/404_three.png') }}" alt=""></div>
+                <div class="three wow clipInDown" data-wow-delay="1.8s"><img class="img_three"
+                        src="{{ url_for('static', filename='img/error/404_one.png') }}" alt=""></div>
             </div>
+            <h2 class="wow fadeIn">Error. We can’t find the page you’re looking for.</h2>
+            <p>Sorry for the inconvenience. Go to our homepage and check out the latest jobs and collections of Fashion,
+                Electronics, Services and more...</p>
+
+            <a href="{{ url_for('index') }}" class="action_btn theme-btn mt-3"><i class="arrow_left"></i>Back to Home
+                Page</a>
         </div>
     </div>
 </section>
+<!-- Error end -->
 {% endblock %}

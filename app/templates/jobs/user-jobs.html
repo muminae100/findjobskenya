@@ -10,12 +10,6 @@
         <div class="col-md-12">
           <div class="breadcrumb-content pt-170">
             <h1>My posted jobs</h1>
-            <p class="text-light"><a target="_blank"
-              href="https://images.pexels.com/photos/5905923/pexels-photo-5905923.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940">
-              Photo by Katerina Holmes from Pexels
-              <i class="fa fa-link"></i>
-              </a>
-          </p>
           </div>
         </div>
       </div>
@@ -23,7 +17,7 @@
   </div>
 </section>
 <!-- BreadCrumb end -->
-{% if not jobs %}
+{% if length_of_jobs == 0 %}
 <div class="jumbotron">
 <h3>You have not posted any job yet</h3>
 </div>
@@ -38,10 +32,8 @@
     <thead>
     <tr>
     <th></th>
-    <th>Id #</th>
     <th>Job Name</th>
     <th>Status</th>
-    <th>Created</th>
     <th></th>
     </tr>
     </thead>
@@ -64,15 +56,12 @@
     </button>
     </form>
     </td>
-    <td>#{{ job.id }}</td>
     <td>{{ job.title }}</td>
     {% if job.active == True %}
     <td><span class="badge badge-success">Active</span></td>
     {% else %}
     <td><span class="badge badge-danger">Inactive</span></td>
     {% endif %}
-    <td>{{ job.date_posted.strftime('%d-%m-%Y') }}</td>
-
     <td>
       <div class="dropdown">
         <button class="btn dropdown-toggle" type="button" data-toggle="dropdown">
