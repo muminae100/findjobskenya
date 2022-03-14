@@ -8,7 +8,7 @@ from app.models import (Jobalerts, Jobs, Notifications, Proposals, Products, Pro
 Users, Categories, Jobschedule, Counties, Docs, Productcategories, Productimg)
 from flask_login import login_user,current_user,logout_user,login_required
 from app.forms import (RegistrationForm,LoginForm,UpdateAccountForm,
-PostJobForm,RequestResetForm,ResetPasswordForm,ContactForm,ProposalForm, PostProductForm)
+PostJobForm,RequestResetForm,ResetPasswordForm,ProposalForm, PostProductForm)
 from flask_mail import Message
 from werkzeug.utils import secure_filename
 UPLOAD_FOLDER = os.path.join(app.root_path, 'static/proposals/doc_uploads')
@@ -29,7 +29,6 @@ def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'],filename)
 
 @app.route('/')
-@login_required
 def index():
     page = request.args.get('page', 1, type=int)
     schedule = request.args.get('schedule', 'Full-time', type=str)
@@ -86,7 +85,17 @@ def register():
     form = RegistrationForm()
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        newuser = Users(email=form.email.data,phone_number=form.phone.data,username=form.username.data,password=hashed_password)
+        i = None
+        f = None
+        t = None
+        if form.instagram.data:
+            i = form.instagram.data
+        if form.facebook.data:
+            f = form.facebook.data
+        if form.twitter.data:
+            t = form.twitter.data
+        newuser = Users(email=form.email.data,phone_number=form.phone.data,username=form.username.data,
+        password=hashed_password,instagram=i,facebook=f,twitter=t)
         db.session.add(newuser)
         db.session.commit()
 
@@ -124,12 +133,29 @@ def account():
             current_user.profile_pic = picture_file
         current_user.username = form.username.data
         current_user.email = form.email.data
+        current_user.phone_number = form.phone.data
+        i = None
+        f = None
+        t = None
+        if form.instagram.data:
+            i = form.instagram.data
+        if form.facebook.data:
+            f = form.facebook.data
+        if form.twitter.data:
+            t = form.twitter.data
+        current_user.instagram = i
+        current_user.facebook = f
+        current_user.twitter = t
         db.session.commit()
         flash('Account info has been updated!', 'success')
         return redirect(url_for('account'))
     elif request.method == 'GET':
         form.username.data = current_user.username
         form.email.data = current_user.email
+        form.phone.data = current_user.phone_number
+        form.instagram.data = current_user.instagram
+        form.facebook.data = current_user.facebook
+        form.twitter.data = current_user.twitter
     image_file = url_for('static', filename = 'img/profile-imgs/' + current_user.profile_pic)
     return render_template('account.html', title = current_user.username, profile_pic = image_file, form = form, length=length)
 
@@ -254,7 +280,6 @@ def newjob():
 
 
 @app.route('/<int:id>', methods = ['GET', 'POST'])
-@login_required
 def job(id):
     n = []
     notifications = Notifications.query.order_by(Notifications.date_sent.desc()).all()
@@ -401,7 +426,7 @@ def reset_token(token):
     return render_template('reset_token.html', title = 'Reset Password', form = form)
 
 
-@app.route('/terms_and_conditions')
+@app.route('/terms_of_use')
 def terms_conditions():
     n = []
     notifications = Notifications.query.order_by(Notifications.date_sent.desc()).all()
@@ -410,7 +435,40 @@ def terms_conditions():
             n.append(notification)
 
     length = len(n)
-    return render_template('terms_and_conditions.html', title='Terms and conditions', length=length)
+    return render_template('terms_of_use.html', title='Terms of use', length=length)
+
+@app.route('/contact_us')
+def contact_us():
+    n = []
+    notifications = Notifications.query.order_by(Notifications.date_sent.desc()).all()
+    for notification in notifications:
+        if notification.receiver == current_user.email and notification.read == False:
+            n.append(notification)
+
+    length = len(n)
+    return render_template('contact.html', title='Contact Us', length=length)
+
+@app.route('/safety_tips')
+def safety_tips():
+    n = []
+    notifications = Notifications.query.order_by(Notifications.date_sent.desc()).all()
+    for notification in notifications:
+        if notification.receiver == current_user.email and notification.read == False:
+            n.append(notification)
+
+    length = len(n)
+    return render_template('safety-tips.html', title='Stay safe on ForeverKenyan', length=length)
+
+@app.route('/faq')
+def faq():
+    n = []
+    notifications = Notifications.query.order_by(Notifications.date_sent.desc()).all()
+    for notification in notifications:
+        if notification.receiver == current_user.email and notification.read == False:
+            n.append(notification)
+
+    length = len(n)
+    return render_template('faq.html', title='FAQ', length=length)
 
 @app.route('/privacy_policy')
 def privacy_policy():
@@ -952,7 +1010,6 @@ def send_msg_applicant(j_id, p_id):
 
 # market place
 @app.route('/marketplace')
-@login_required
 def market_place():
     page = request.args.get('page', 1, type=int)
     category = request.args.get('category', 'Fashion', type=str)
@@ -1126,7 +1183,6 @@ def addproductimgs(id):
 
 
 @app.route('/product/<int:id>', methods = ['GET', 'POST'])
-@login_required
 def product(id):
     n = []
     notifications = Notifications.query.order_by(Notifications.date_sent.desc()).all()
@@ -1236,12 +1292,14 @@ def save_product(id):
     product = Products.query.get_or_404(int(id))
     if product.owner == current_user:
         flash('You can not like your own product', 'danger')
+        return redirect(url_for('market_place'))
     if product in current_user.saved_products:
         flash('You already liked this product', 'info')
+        return redirect(url_for('market_place'))
     current_user.saved_products.append(product)
     db.session.commit()
-    flash('Product/service liked successfully', 'success')
-    return redirect(url_for('saved_products'))
+    flash('Product/service added to your favourites', 'success')
+    return redirect(url_for('market_place'))
 
 @app.route('/favourite-products')
 @login_required

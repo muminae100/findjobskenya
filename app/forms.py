@@ -3,13 +3,16 @@ from flask_wtf.file import FileField, FileAllowed
 from flask_login import current_user
 from wtforms import StringField,PasswordField,SubmitField,BooleanField, TextAreaField,SelectField
 from wtforms.validators import DataRequired,Length,Email,EqualTo,ValidationError
-from app.models import Categories, Users
+from app.models import Users
 
 class RegistrationForm(FlaskForm):
     username = StringField('Username',
     validators=[DataRequired(),Length(min=2,max=20)])
     email = StringField('Email', validators=[DataRequired(),Email()])
     phone = StringField('Phone number',validators=[DataRequired()])
+    instagram = StringField('Instagram link(Optional) e.g, https://www.instagram.com/username/')
+    facebook = StringField('Facebook link(Optional) e.g, https://www.facebook.com/username/')
+    twitter = StringField('Twitter link(Optional) e.g, https://twitter.com/username')
     password = PasswordField('Password',validators=[DataRequired()])
     confirm_password = PasswordField('Confirm Password',
     validators = [DataRequired(), EqualTo('password')])
@@ -38,6 +41,10 @@ class UpdateAccountForm(FlaskForm):
     username = StringField('Username',
     validators=[DataRequired(),Length(min=2,max=20)])
     email = StringField('Email', validators=[DataRequired(),Email()])
+    phone = StringField('Phone number',validators=[DataRequired()])
+    instagram = StringField('Instagram link e.g, https://www.instagram.com/username/', default='None')
+    facebook = StringField('Facebook link e.g, https://www.facebook.com/username/', default='None')
+    twitter = StringField('Twitter link e.g, https://twitter.com/username', default='None')
     picture = FileField('Update profile picture', validators=[FileAllowed(['jpg','png','jpeg'])])
     submit = SubmitField('Update')
 
@@ -67,11 +74,11 @@ class PostJobForm(FlaskForm):
     submit = SubmitField('Post')
 
 class PostProductForm(FlaskForm):
-    title = StringField('Product Title', validators=[DataRequired(),Length(min=5,max=150)])
+    title = StringField('Title', validators=[DataRequired(),Length(min=5,max=150)])
     category = SelectField(u'Category', choices=[], validators=[DataRequired()])
-    location = SelectField(u'Product location', choices=[], validators=[DataRequired()])
+    location = SelectField(u'Location', choices=[], validators=[DataRequired()])
     additionaldetails = StringField('Additional details(Optional)')
-    price = StringField('Estimated price(number only e.g 10,000)', validators=[DataRequired()])
+    price = StringField('Price(number only e.g 10,000)', validators=[DataRequired()])
     submit = SubmitField('Next')
 
 class ProposalForm(FlaskForm):
@@ -96,12 +103,6 @@ class ResetPasswordForm(FlaskForm):
     confirm_password = PasswordField('Confirm Password',
     validators = [DataRequired(), EqualTo('password')])
     submit = SubmitField('Reset Password')
-
-
-class ContactForm(FlaskForm):
-    email = StringField('Your email', validators=[DataRequired(),Email()])
-    message = TextAreaField('Message', validators=[DataRequired()])
-    submit = SubmitField('Send')
 
 
 class SendNotificationsForm(FlaskForm):

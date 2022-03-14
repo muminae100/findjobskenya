@@ -68,6 +68,58 @@
                                 {{ form.email(class="form-control form-control-lg") }}
                             {% endif %}
                         </div>
+                        <div class="col-md-12 mt-20">
+                            {{ form.phone.label(class="form-control-label") }}
+                            {% if form.phone.errors %}
+                            {{ form.phone(class="form-control form-control-lg is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.phone.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                                {{ form.phone(class="form-control form-control-lg") }}
+                            {% endif %}
+                        </div>
+                        <div class="col-md-12 mt-20">
+                            {{ form.instagram.label(class="form-control-label") }}
+                            {% if form.instagram.errors %}
+                            {{ form.instagram(class="form-control form-control-lg is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.instagram.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                                {{ form.instagram(class="form-control form-control-lg") }}
+                            {% endif %}
+                        </div>
+                        <div class="col-md-12 mt-20">
+                            {{ form.facebook.label(class="form-control-label") }}
+                            {% if form.facebook.errors %}
+                            {{ form.facebook(class="form-control form-control-lg is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.facebook.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                                {{ form.facebook(class="form-control form-control-lg") }}
+                            {% endif %}
+                        </div>
+                        <div class="col-md-12 mt-20">
+                            {{ form.twitter.label(class="form-control-label") }}
+                            {% if form.twitter.errors %}
+                            {{ form.twitter(class="form-control form-control-lg is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.twitter.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                                {{ form.twitter(class="form-control form-control-lg") }}
+                            {% endif %}
+                        </div>
                       <div class="col-md-12 mt-20">
                           {{ form.picture.label() }}
                           {{ form.picture(class="form-control-file") }}

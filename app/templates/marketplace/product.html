@@ -56,23 +56,28 @@
                                             <a class="p-2" href="mailto:{{ product.owner.email }}">
                                                 <i style="font-size: 22px;" class="fa fa-envelope text-secondary"></i>
                                             </a>
-                                            <a class="p-2" href="https://wa.me/254{{ product.owner.phone }}">
-                                                <i style="font-size: 24px;color: #25D366;" class="fab fa-whatsapp"></i>
-                                            </a>
                                       </div>
                                     </div>
                                     <div class="widget-content p-3">
+                                        {% if product.owner.instagram != None or product.owner.facebook != None or product.owner.twitter != None %}
                                         <p><b>Social Media</b></p>
+                                        {% endif %}
                                         <div class="mt-2 mb-2">
+                                            {% if product.owner.instagram != None %}
                                             <a class="pr-2 pt-2 pb-2" target="_blank" href="{{ product.owner.instagram }}">
                                                 <i style="font-size: 24px;color: #F77737;" class="fab fa-instagram"></i>
                                             </a>
+                                            {% endif %}
+                                            {% if product.owner.facebook != None %}
                                             <a class="p-2" target="_blank" href="{{ product.owner.facebook }}">
                                                 <i style="font-size: 24px;color: #4267B2;" class="fab fa-facebook"></i>
                                             </a>
+                                            {% endif %}
+                                            {% if product.owner.twitter != None %}
                                             <a class="p-2" target="_blank" href="{{ product.owner.twitter }}">
                                                 <i style="font-size: 24px;color: #1DA1F2;" class="fab fa-twitter"></i>
                                             </a>
+                                            {% endif %}
                                       </div>
                                     </div>
                                 </div>
