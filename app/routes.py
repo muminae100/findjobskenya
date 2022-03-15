@@ -41,13 +41,16 @@ def index():
     counties = Counties.query.all()
     schedules = Jobschedule.query.all()
 
-    n = []
-    notifications = Notifications.query.order_by(Notifications.date_sent.desc()).all()
-    for notification in notifications:
-        if notification.receiver == current_user.email and notification.read == False:
-            n.append(notification)
+    length = 0
 
-    length = len(n)
+    if current_user.is_authenticated:
+        n = []
+        notifications = Notifications.query.order_by(Notifications.date_sent.desc()).all()
+        for notification in notifications:
+            if notification.receiver == current_user.email and notification.read == False:
+                n.append(notification)
+
+        length = len(n)
             
 
     jobcategory = Categories.query.filter_by(categoryname=category).first_or_404()
@@ -200,6 +203,9 @@ def send_alert_email(job, email):
     You can view the job in our website using the link below:
     {url_for('job',id=job.id,_external = True)}
 
+    Click the link below to unsubscribe from this job alert
+    {url_for('unsubscribe_job',email=email,category=job.category.categoryname,county=job.location.name,schedule=job.schedule.schedulename,_external = True)}  
+
 '''
     mail.send(msg)
 
@@ -281,13 +287,16 @@ def newjob():
 
 @app.route('/<int:id>', methods = ['GET', 'POST'])
 def job(id):
-    n = []
-    notifications = Notifications.query.order_by(Notifications.date_sent.desc()).all()
-    for notification in notifications:
-        if notification.receiver == current_user.email and notification.read == False:
-            n.append(notification)
+    length = 0
 
-    length = len(n)
+    if current_user.is_authenticated:
+        n = []
+        notifications = Notifications.query.order_by(Notifications.date_sent.desc()).all()
+        for notification in notifications:
+            if notification.receiver == current_user.email and notification.read == False:
+                n.append(notification)
+
+        length = len(n)
     form =ProposalForm()
     job = Jobs.query.get_or_404(int(id))
     now = datetime.datetime.now() 
@@ -428,57 +437,72 @@ def reset_token(token):
 
 @app.route('/terms_of_use')
 def terms_conditions():
-    n = []
-    notifications = Notifications.query.order_by(Notifications.date_sent.desc()).all()
-    for notification in notifications:
-        if notification.receiver == current_user.email and notification.read == False:
-            n.append(notification)
+    length = 0
 
-    length = len(n)
+    if current_user.is_authenticated:
+        n = []
+        notifications = Notifications.query.order_by(Notifications.date_sent.desc()).all()
+        for notification in notifications:
+            if notification.receiver == current_user.email and notification.read == False:
+                n.append(notification)
+
+        length = len(n)
     return render_template('terms_of_use.html', title='Terms of use', length=length)
 
 @app.route('/contact_us')
 def contact_us():
-    n = []
-    notifications = Notifications.query.order_by(Notifications.date_sent.desc()).all()
-    for notification in notifications:
-        if notification.receiver == current_user.email and notification.read == False:
-            n.append(notification)
+    length = 0
 
-    length = len(n)
+    if current_user.is_authenticated:
+        n = []
+        notifications = Notifications.query.order_by(Notifications.date_sent.desc()).all()
+        for notification in notifications:
+            if notification.receiver == current_user.email and notification.read == False:
+                n.append(notification)
+
+        length = len(n)
     return render_template('contact.html', title='Contact Us', length=length)
 
 @app.route('/safety_tips')
 def safety_tips():
-    n = []
-    notifications = Notifications.query.order_by(Notifications.date_sent.desc()).all()
-    for notification in notifications:
-        if notification.receiver == current_user.email and notification.read == False:
-            n.append(notification)
+    length = 0
 
-    length = len(n)
+    if current_user.is_authenticated:
+        n = []
+        notifications = Notifications.query.order_by(Notifications.date_sent.desc()).all()
+        for notification in notifications:
+            if notification.receiver == current_user.email and notification.read == False:
+                n.append(notification)
+
+        length = len(n)
     return render_template('safety-tips.html', title='Stay safe on ForeverKenyan', length=length)
 
 @app.route('/faq')
 def faq():
-    n = []
-    notifications = Notifications.query.order_by(Notifications.date_sent.desc()).all()
-    for notification in notifications:
-        if notification.receiver == current_user.email and notification.read == False:
-            n.append(notification)
+    length = 0
 
-    length = len(n)
+    if current_user.is_authenticated:
+        n = []
+        notifications = Notifications.query.order_by(Notifications.date_sent.desc()).all()
+        for notification in notifications:
+            if notification.receiver == current_user.email and notification.read == False:
+                n.append(notification)
+
+        length = len(n)
     return render_template('faq.html', title='FAQ', length=length)
 
 @app.route('/privacy_policy')
 def privacy_policy():
-    n = []
-    notifications = Notifications.query.order_by(Notifications.date_sent.desc()).all()
-    for notification in notifications:
-        if notification.receiver == current_user.email and notification.read == False:
-            n.append(notification)
+    length = 0
 
-    length = len(n)
+    if current_user.is_authenticated:
+        n = []
+        notifications = Notifications.query.order_by(Notifications.date_sent.desc()).all()
+        for notification in notifications:
+            if notification.receiver == current_user.email and notification.read == False:
+                n.append(notification)
+
+        length = len(n)
     return render_template('privacy_policy.html', title='Privacy policy',length=length)
 
 
@@ -513,6 +537,7 @@ def saved_jobs():
         j.append(job)
     length_of_jobs = len(j)
     return render_template('jobs/saved-jobs.html', jobs=jobs, length=length,length_of_jobs=length_of_jobs)
+
 
 
 
@@ -1020,13 +1045,16 @@ def market_place():
     total_categories = len(categories) + len(more_categories)
     counties = Counties.query.all()
 
-    n = []
-    notifications = Notifications.query.order_by(Notifications.date_sent.desc()).all()
-    for notification in notifications:
-        if notification.receiver == current_user.email and notification.read == False:
-            n.append(notification)
+    length = 0
 
-    length = len(n)
+    if current_user.is_authenticated:
+        n = []
+        notifications = Notifications.query.order_by(Notifications.date_sent.desc()).all()
+        for notification in notifications:
+            if notification.receiver == current_user.email and notification.read == False:
+                n.append(notification)
+
+        length = len(n)
             
 
     productcategory = Productcategories.query.filter_by(productcategoryname=category).first_or_404()
@@ -1184,13 +1212,16 @@ def addproductimgs(id):
 
 @app.route('/product/<int:id>', methods = ['GET', 'POST'])
 def product(id):
-    n = []
-    notifications = Notifications.query.order_by(Notifications.date_sent.desc()).all()
-    for notification in notifications:
-        if notification.receiver == current_user.email and notification.read == False:
-            n.append(notification)
+    length = 0
 
-    length = len(n)
+    if current_user.is_authenticated:
+        n = []
+        notifications = Notifications.query.order_by(Notifications.date_sent.desc()).all()
+        for notification in notifications:
+            if notification.receiver == current_user.email and notification.read == False:
+                n.append(notification)
+
+        length = len(n)
     product = Products.query.get_or_404(int(id))
     images = []
     imgs = product.images
@@ -1314,6 +1345,26 @@ def saved_products():
     products = current_user.saved_products
     return render_template('marketplace/saved-products.html', products=products, length=length)
 
+# unsubscribe emails
+@app.route('/unsubscribe')
+def unsubscribe():
+    return render_template('unsubscribe.html')
+
+
+@app.route('/unsubscribe_jobalert', methods=['POST'])
+def unsubscribe_job():
+    email = request.form.get('email')
+    category = request.form.get('category')
+    county = request.form.get('county')
+    schedule = request.form.get('schedule')
+    alert = Jobalerts.query.filter_by(email=email).filter_by(category=category)\
+        .filter_by(county=county).filter_by(schedule=schedule).first_or_404()
+    db.session.delete(alert)
+    db.session.commit()
+    flash('You have successfully unsubscribed from job alert')
+    return redirect(url_for('index'))
+
+
 
 
 # admin
@@ -1331,22 +1382,28 @@ def saved_products():
 
 @app.errorhandler(404)
 def page_not_found(e):
-    n = []
-    notifications = Notifications.query.order_by(Notifications.date_sent.desc()).all()
-    for notification in notifications:
-        if notification.receiver == current_user.email and notification.read == False:
-            n.append(notification)
+    length = 0
 
-    length = len(n)
+    if current_user.is_authenticated:
+        n = []
+        notifications = Notifications.query.order_by(Notifications.date_sent.desc()).all()
+        for notification in notifications:
+            if notification.receiver == current_user.email and notification.read == False:
+                n.append(notification)
+
+        length = len(n)
     return render_template('404.html', length=length), 404
 
 @app.errorhandler(500)
 def internal_error(error):
-    n = []
-    notifications = Notifications.query.order_by(Notifications.date_sent.desc()).all()
-    for notification in notifications:
-        if notification.receiver == current_user.email and notification.read == False:
-            n.append(notification)
+    length = 0
 
-    length = len(n)
+    if current_user.is_authenticated:
+        n = []
+        notifications = Notifications.query.order_by(Notifications.date_sent.desc()).all()
+        for notification in notifications:
+            if notification.receiver == current_user.email and notification.read == False:
+                n.append(notification)
+
+        length = len(n)
     return render_template('500.html', length=length), 500

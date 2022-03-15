@@ -154,7 +154,7 @@
                                     {% endif %}
                                 </ul>
                             </li>
-                            {% if current_user.is_authenticated %}
+                            
                             <li class="nav-item dropdown submenu">
                                 <a class="nav-link dropdown-toggle" href="#" role="button"
                                     data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -165,11 +165,14 @@
 
                                 <ul class="dropdown-menu">
                                     <li class="nav-item"><a class="nav-link" href="{{ url_for('index') }}">Find work</a></li>
+                                    {% if current_user.is_authenticated %}
                                     <li class="nav-item"><a class="nav-link" href="{{ url_for('my_proposals') }}">My proposals</a>
                                     </li>
                                     <li class="nav-item"><a class="nav-link" href="{{ url_for('saved_jobs') }}">Saved jobs</a></li>
+                                    {% endif %}
                                 </ul>
                             </li>
+                            {% if current_user.is_authenticated %}
                             <li class="nav-item dropdown submenu">
                                 <a class="nav-link dropdown-toggle" href="#" role="button"
                                     data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -184,6 +187,7 @@
                                     </li>
                                 </ul>
                             </li>
+                            {% endif %}
                             <li class="nav-item dropdown submenu">
                                 <a class="nav-link dropdown-toggle" href="#" role="button"
                                     data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -194,12 +198,15 @@
 
                                 <ul class="dropdown-menu">
                                     <li class="nav-item"><a class="nav-link" href="{{ url_for('market_place') }}">Market place</a></li>
+                                    {% if current_user.is_authenticated %}
                                     <li class="nav-item"><a class="nav-link" href="{{ url_for('newproduct') }}">Post new product/service</a></li>
                                     <li class="nav-item"><a class="nav-link" href="{{ url_for('author_products') }}">My posted products/services</a>
                                     </li>
                                     <li class="nav-item"><a class="nav-link" href="{{ url_for('saved_products') }}">Liked products/services</a></li>
+                                    {% endif %}
                                 </ul>
                             </li>
+                            {% if current_user.is_authenticated %}
                             <li id="inbox" class="nav-item submenu ">
                                 {% if length > 0 %}
                                 <a href="{{ url_for('notifications') }}" class="notification navbar-brand">
@@ -212,12 +219,12 @@
                                 </a>
                                 {% endif %}
                             </li>
+                            
                             <li id="profile-img" class="nav-item submenu">
                                 <a href="#" class="navbar-brand">
                                 <img class="rounded-circle" width="35" height="35" src="{{ url_for('static', filename = 'img/profile-imgs/') }}{{ current_user.profile_pic }}">
                                 </a>
                             </li>
-                            {% else %}
                             {% endif %}
                         </ul>
                     </div>

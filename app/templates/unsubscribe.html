@@ -2,12 +2,12 @@
 {% block body %}
 <!-- BreadCrumb start -->
 <section class="breadcrumb-area">
-    <div class="breadcrumb-widget  pt-145 pb-125" style="background-image: url(https://images.pexels.com/photos/1416530/pexels-photo-1416530.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500);">
+    <div class="breadcrumb-widget  pt-145 pb-125" style="background-image: url(https://images.pexels.com/photos/2882566/pexels-photo-2882566.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940);">
         <div class="container">
             <div class="row">
                 <div class="col-md-12">
                     <div class="breadcrumb-content pt-170">
-                        <h1>Contact Us</h1>
+                        <h1>Unsubscribe email alerts</h1>
                     </div>
                 </div>
             </div>
@@ -17,22 +17,21 @@
 </section>
 <!-- BreadCrumb end -->
 
-  <!-- contact start -->
+  <!-- unsubscribe start -->
   <section class="pt-140 pb-140 get-touch-area bg_white">
     <div class="container">
         <div class="row gy-4 gy-lg-0">
             <div class="container">
                 <div class="contact-form-widget">
-                    <div class="jumbotron">
-                        Our customer support team is always ready to answer your questions and provide all the necessary assistance.
-                        You can email your questions, suggestions, and comments at smuminaetx100@gmail.com.
-                    </div>
-                
+                    <form action="{{ url_for('unsubscribe_job') }}" method="POST">
+                        <label for="email">Email</label>
+                    </form>
+                 
                 </div>
             </div>
         </div>
     </div>
 </section>
-<!-- contact end -->
+<!-- unsubscribe end -->
 
 {% endblock body %}
