@@ -1,3 +1,4 @@
+import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
@@ -6,8 +7,8 @@ from flask_mail import Mail
 from flask_migrate import Migrate
 
 app = Flask(__name__)
-app.secret_key = '92660847ee989c815a32b5ecbad887f7'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///jobskenya.db'
+app.secret_key = os.environ.get('SECRET_KEY')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
@@ -18,8 +19,8 @@ login_manager.login_message_category = 'info'
 app.config['MAIL_SERVER'] = 'smtp.googlemail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = 'smuminaetx100@gmail.com'
-app.config['MAIL_PASSWORD'] = 'muminaetx100@hitman'
+app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
 mail = Mail(app)
 
 from app import routes
