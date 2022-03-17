@@ -1,6 +1,4 @@
 from datetime import datetime
-from email import message
-from unicodedata import category
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from app import app,db,login_manager
 from flask_login import UserMixin
