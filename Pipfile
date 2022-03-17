@@ -19,6 +19,7 @@ timeago = "*"
 bleach = "*"
 flask-migrate = "*"
 flask-script = "*"
+psycopg2 = "*"
 
 [dev-packages]
 
