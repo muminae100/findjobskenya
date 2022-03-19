@@ -2,7 +2,7 @@ import timeago,datetime
 import os
 import secrets
 from PIL import Image
-from flask import render_template,redirect,request,url_for,flash,abort,jsonify,send_from_directory
+from flask import render_template,redirect,request,url_for,flash,abort,send_from_directory
 from app import app,db,bcrypt,mail
 from app.models import (Jobalerts, Jobs, Notifications, Proposals, Products, Productalerts,
 Users, Categories, Jobschedule, Counties, Docs, Productcategories, Productimg)
