@@ -1037,7 +1037,7 @@ def send_msg_applicant(j_id, p_id):
 @app.route('/marketplace')
 def market_place():
     page = request.args.get('page', 1, type=int)
-    category = request.args.get('category', 'Fashion', type=str)
+    category = request.args.get('category', 'Electronics', type=str)
     county = request.args.get('county', 'Nairobi', type=str)
     all_categories = Productcategories.query.all()
     categories = Productcategories.query.limit(10).all()
