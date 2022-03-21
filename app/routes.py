@@ -169,33 +169,51 @@ def logout():
     return redirect(url_for('login'))
 
 def send_alert_email(job, email):
-    msg = Message('Job alert', 
+    msg = Message(f'{job.title}', 
                    sender='smuminaetx100@gmail.com',
                    recipients=[email])
-    msg.body = f'''A new job has been posted:
+    msg.body = f'''
+    A new job has been posted:
 
+    Job title:
     {job.title}
+
+    Job category:
     {job.category.categoryname}
+
+    Location:
     {job.location.name}
+
+    Job schedule:
     {job.schedule.schedulename}
+
     Job responsibilities:
     {job.job_responsibilities}
+
     Education level:
     {job.education}
+
     Experience:
     {job.experience}
+
     Additional requirements:
     {job.additional_req}
+
     Compensation:
     {job.compensation}
+
     Job Active:
     {job.active}
+
     Salary:
     {job.salary}
+
     Date posted:
     {job.date_posted}
+
     Posted by 
     {job.author.username}
+
     Contact details:
     {job.author.email}
     {job.author.phone_number}
@@ -204,7 +222,7 @@ def send_alert_email(job, email):
     {url_for('job',id=job.id,_external = True)}
 
     Click the link below to unsubscribe from this job alert
-    {url_for('unsubscribe_job',email=email,category=job.category.categoryname,county=job.location.name,schedule=job.schedule.schedulename,_external = True)}  
+    {url_for('unsubscribe_job',_external = True)}
 
 '''
     mail.send(msg)
@@ -214,33 +232,13 @@ def send_notification(j, receiver):
     s = Users.query.filter_by(email=j.author.email).first_or_404()
     r = Users.query.filter_by(email=receiver).first_or_404()
     message = f'''
-    A new job has been posted by {j.author.username}
-    Job details:
+    <h6>A new job has been posted:</h6>
+    <div>
+    <a class="text-primary" href="{url_for('job',id=j.id)}">
     {j.title}
-    {j.category.categoryname}
-    {j.location.name}
-    {j.schedule.schedulename}
-    Job responsibilities:
-    {j.job_responsibilities}
-    Education level:
-    {j.education}
-    Experience:
-    {j.experience}
-    Additional requirements:
-    {j.additional_req}
-    Compensation:
-    {j.compensation}
-    Job Active:
-    {j.active}
-    Salary:
-    {j.salary}
-    Date posted:
-    {j.date_posted}
-    Posted by 
-    {j.author.username}
-    Contact details:
-    {j.author.email}
-    {j.author.phone_number}
+    </a>
+    </div>
+    
     '''
     
     notification = Notifications(sender=s.email, receiver=r.email, message=message)
@@ -285,7 +283,7 @@ def newjob():
     return render_template('jobs/newjob.html', title = 'Post new job',form=form, text = 'Post a New Job', length=length)
 
 
-@app.route('/<int:id>', methods = ['GET', 'POST'])
+@app.route('/job/<int:id>', methods = ['GET', 'POST'])
 def job(id):
     length = 0
 
@@ -303,7 +301,7 @@ def job(id):
     time_posted = timeago.format(job.date_posted, now)
     return render_template('jobs/job-application.html', title=job.title, job = job,time_posted=time_posted,form=form, length=length)
 
-@app.route('/<int:id>/update', methods = ['GET', 'POST'])
+@app.route('/job/<int:id>/update', methods = ['GET', 'POST'])
 @login_required
 def jobupdate(id):
     job = Jobs.query.get_or_404(int(id))
@@ -350,7 +348,7 @@ def jobupdate(id):
     return render_template('jobs/updatejob.html', title = 'Update job post', form = form, text = 'Update post', length=length)
 
 
-@app.route('/<int:id>/delete', methods = ['POST'])
+@app.route('/job/<int:id>/delete', methods = ['POST'])
 @login_required
 def deletejob(id):
     job = Jobs.query.get_or_404(id)
@@ -547,39 +545,12 @@ def send_email_applicant(proposal, job, m):
     msg = Message(f'You have received a reply from {job.author.username}', 
                    sender= f'smuminaetx100@gmail.com',
                    recipients=[proposal.job_seeker.email])
-    msg.body = f'''Message:
+    msg.body = f'''
+    Message:
     {m}
 
     This message was send after you had applied for the job below:
-
-    {job.title}
-    {job.category.categoryname}
-    {job.location.name}
-    {job.schedule.schedulename}
-    Job responsibilities:
-    {job.job_responsibilities}
-    Education level:
-    {job.education}
-    Experience:
-    {job.experience}
-    Additional requirements:
-    {job.additional_req}
-    Compensation:
-    {job.compensation}
-    Job Active:
-    {job.active}
-    Salary:
-    {job.salary}
-    Date posted:
-    {job.date_posted}
-    Posted by 
-    {job.author.username}
-    Contact details:
-    {job.author.email}
-    {job.author.phone_number}
-
-    You can view the job in our website using the link below:
-    {url_for('job',id=job.id,_external = True)}
+    View job: {url_for('job',id=job.id,_external = True)}
 
 '''
     mail.send(msg)
@@ -590,41 +561,13 @@ def send_notification_applicant(p,j):
     r = Users.query.filter_by(email=p.job_seeker.email).first_or_404()
     message = f'''
     Your  job proposal has been submitted successfully!
-    Applicant information:
-    First Name: {p.firstname}
-    Last Name: {p.lastname}
-    Phone Number: {p.phone}
-    Email: {p.email}
 
-    Message:
-    {p.message}
+    View the proposal with the link below:
+    <a class="text-primary" href="{url_for('proposal', id=p.id)}">My proposal</a>
 
-    Job details:
-    {j.title}
-    {j.category.categoryname}
-    {j.location.name}
-    {j.schedule.schedulename}
-    Job responsibilities:
-    {j.job_responsibilities}
-    Education level:
-    {j.education}
-    Experience:
-    {j.experience}
-    Additional requirements:
-    {j.additional_req}
-    Compensation:
-    {j.compensation}
-    Job Active:
-    {j.active}
-    Salary:
-    {j.salary}
-    Date posted:
-    {j.date_posted}
-    Posted by 
-    {j.author.username}
-    Contact details:
-    {j.author.email}
-    {j.author.phone_number}
+    You are applying for the job below:
+    <a class="text-primary" href="{url_for('job', id=j.id)}">{j.title}</a>
+    
     '''
     
     notification = Notifications(sender=s.email, receiver=r.email, message=message)
@@ -646,30 +589,11 @@ def send_email_recruiter(proposal, job):
     Message:
     {proposal.message}
 
-    Application applied for your job posted on 
-    {job.date_posted} below:
-
-    {job.title}
-    {job.category.categoryname}
-    {job.location.name}
-    {job.schedule.schedulename}
-    Job responsibilities:
-    {job.job_responsibilities}
-    Education level:
-    {job.education}
-    Experience:
-    {job.experience}
-    Additional requirements:
-    {job.additional_req}
-    Compensation:
-    {job.compensation}
-    Job Active:
-    {job.active}
-    Salary:
-    {job.salary}
-
-    You can view the proposal in our website using the link below:
-    {url_for('proposal',id=proposal.id,_external = True)}
+    Application applied for your job posted below:
+    view job: {url_for('job',id=job.id)}
+    
+    You can view all the job proposals in our website using the link below:
+    {url_for('submitted_proposals',id=job.id,_external = True)}
 
 '''
     mail.send(msg)
@@ -690,28 +614,8 @@ def send_notification_recruiter(p,j):
     Message:
     {p.message}
 
-    Application applied for your job posted on {j.date_posted} below:
-    
-    
-    Job details:
-    {j.title}
-    {j.category.categoryname}
-    {j.location.name}
-    {j.schedule.schedulename}
-    Job responsibilities:
-    {j.job_responsibilities}
-    Education level:
-    {j.education}
-    Experience:
-    {j.experience}
-    Additional requirements:
-    {j.additional_req}
-    Compensation:
-    {j.compensation}
-    Job Active:
-    {j.active}
-    Salary:
-    {j.salary}
+    Applicant applying for the job you posted below:
+    View job: {url_for('job',id-j.id)}
     '''
     
     notification = Notifications(sender=s.email, receiver=r.email, message=message)
@@ -979,39 +883,15 @@ def notifications():
 def send_applicant_reply(p,j,m):
     s = Users.query.filter_by(email=j.author.email).first_or_404()
     r = Users.query.filter_by(email=p.job_seeker.email).first_or_404()
-    message = f'''You have received a reply from {j.author.username}
+    message = f'''
+    You have received a reply from {j.author.username}
     
     Message:
     {m}
 
-    This message was send after you had applied for the job below:
-
-    Job details:
-    {j.title}
-    {j.category.categoryname}
-    {j.location.name}
-    {j.schedule.schedulename}
-    Job responsibilities:
-    {j.job_responsibilities}
-    Education level:
-    {j.education}
-    Experience:
-    {j.experience}
-    Additional requirements:
-    {j.additional_req}
-    Compensation:
-    {j.compensation}
-    Job Active:
-    {j.active}
-    Salary:
-    {j.salary}
-    Date posted:
-    {j.date_posted}
-    Posted by 
-    {j.author.username}
-    Contact details:
-    {j.author.email}
-    {j.author.phone_number}
+    This message is a reply from a recruiter after you had applied for the job below:
+    {url_for('job', id=j.id)}
+    
     '''
     
     notification = Notifications(sender=s.email, receiver=r.email, message=message)
@@ -1067,21 +947,31 @@ def market_place():
 
 
 def send_product_alert_email(product, email):
-    msg = Message('Product/service alert', 
+    msg = Message(f'{product.title}', 
                    sender='smuminaetx100@gmail.com',
                    recipients=[email])
-    msg.body = f'''A new product/service has been posted:
+    msg.body = f'''
+    A new product/service has been posted:
 
     {product.title}
+
+    Category:
     {product.product_category.productcategoryname}
+
+    Location:
     {product.product_location.name}
+
     {product.additional_details}
+
     Price:
     {product.price}
+
     Date posted:
     {product.date_posted}
+
     Posted by 
     {product.owner.username}
+
     Contact details:
     {product.owner.email}
     {product.owner.phone_number}
@@ -1097,21 +987,10 @@ def send_product_notification(p, receiver):
     s = Users.query.filter_by(email=p.owner.email).first_or_404()
     r = Users.query.filter_by(email=receiver).first_or_404()
     message = f'''
-    A new product/service has been posted by {p.owner.username}
-    Details:
-    {p.title}
-    {p.product_category.productcategoryname}
-    {p.product_location.name}
-    {p.additional_details}
-    Price:
-    {p.price}
-    Date posted:
-    {p.date_posted}
-    Posted by 
-    {p.owner.username}
-    Contact details:
-    {p.owner.email}
-    {p.owner.phone_number}
+    <h6>A new product/service has been posted:</h6>
+    <p><b>View:</b></p>
+    <a class="text-primary" href="{url_for('product',id=p.id)}">{p.title}</a>
+   
     '''
     
     notification = Notifications(sender=s.email, receiver=r.email, message=message)
@@ -1165,7 +1044,7 @@ def newproduct():
         db.session.commit()
         p = Products.query.order_by(Products.id.desc()).first_or_404()
         check_product_alerts(p)
-        flash('Add images to your product/service', 'info')
+        flash('Add images to your product/service.', 'info')
         return redirect(url_for('addproductimgs',id=product.id))
     return render_template('marketplace/new-product.html', title = 'Post new product/service',form=form, text = 'Post a New Product/Service', length=length)
 
