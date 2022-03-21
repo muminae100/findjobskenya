@@ -221,8 +221,14 @@ def send_alert_email(job, alert):
     You can view the job in our website using the link below:
     {url_for('job',id=job.id,_external = True)}
 
+    You are receiving this email because you expressed interest in subscribing to our alert system.
     Click the link below to unsubscribe from this job alert
     {url_for('unsubscribe_job',id=alert.id,_external = True)}
+
+    Our terms of use
+    {url_for('terms_conditions')}
+    Privacy policy
+    {url_for('privacy_policy')}
 
 '''
     mail.send(msg)
@@ -399,10 +405,11 @@ def send_reset_email(user):
     msg = Message('Password Reset Request', 
                    sender='smuminaetx100@gmail.com',
                    recipients=[user.email])
-    msg.body = f'''To reset your password, click the link below:
-{url_for('reset_token',token=token,_external = True)}
-Token expires within one hour!
-If you did not make this request simply ignore this email and no changes will be made.
+    msg.body = f'''
+    To reset your password, click the link below:
+    {url_for('reset_token',token=token,_external = True)}
+    Token expires within one hour!
+    If you did not make this request simply ignore this email and no changes will be made.
 '''
     mail.send(msg)
 
@@ -979,8 +986,15 @@ def send_product_alert_email(product, alert):
     You can view the product/service in our website using the link below:
     {url_for('product',id=product.id,_external = True)}
 
+    You are receiving this email because you expressed interest in subscribing to our alert system.
+
     Click the link below to unsubscribe from this alert
     {url_for('unsubscribe_product',id=alert.id,_external = True)}
+
+    Our terms of use
+    {url_for('terms_conditions')}
+    Privacy policy
+    {url_for('privacy_policy')}
 
 '''
     mail.send(msg)
