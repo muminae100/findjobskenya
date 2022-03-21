@@ -225,11 +225,6 @@ def send_alert_email(job, alert):
     Click the link below to unsubscribe from this job alert
     {url_for('unsubscribe_job',id=alert.id,_external = True)}
 
-    Our terms of use
-    {url_for('terms_conditions',_external = True)}
-    Privacy policy
-    {url_for('privacy_policy',_external = True)}
-
 '''
     mail.send(msg)
 
@@ -995,11 +990,6 @@ def send_product_alert_email(product, alert):
 
     Click the link below to unsubscribe from this alert
     {url_for('unsubscribe_product',id=alert.id,_external = True)}
-
-    Our terms of use
-    {url_for('terms_conditions')}
-    Privacy policy
-    {url_for('privacy_policy')}
 
 '''
     mail.send(msg)
