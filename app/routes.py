@@ -1365,21 +1365,6 @@ def unsubscribe_job():
     return redirect(url_for('index'))
 
 
-
-
-# admin
-# @app.route('/add_category', methods = ['POST'])
-# @login_required
-# def add_category():
-#     if current_user.admin != True:
-#         abort(404)
-#     category = request.form.get('category')
-#     c = Productcategories(productcategoryname=category)
-#     db.session.add(c)
-#     db.session.commit()
-#     return redirect(url_for('market_place'))
-
-
 @app.errorhandler(404)
 def page_not_found(e):
     length = 0
@@ -1407,3 +1392,25 @@ def internal_error(error):
 
         length = len(n)
     return render_template('500.html', length=length), 500
+
+
+
+
+# admin
+@app.route('/add_category', methods = ['POST'])
+@login_required
+def add_category():
+    if current_user.admin != True:
+        abort(404)
+    category = request.form.get('category')
+    c = Productcategories(productcategoryname=category)
+    db.session.add(c)
+    db.session.commit()
+    return redirect(url_for('market_place'))
+
+@app.route('/admin')
+def admin():
+    if current_user.admin != True:
+        abort(404)
+    users = Users.query.paginate()
+    return render_template('admin/index.html', users=users)
