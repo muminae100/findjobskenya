@@ -32,7 +32,7 @@ def uploaded_file(filename):
 def index():
     page = request.args.get('page', 1, type=int)
     schedule = request.args.get('schedule', 'Full-time', type=str)
-    category = request.args.get('category', 'House help', type=str)
+    category = request.args.get('category', 'Computing and IT', type=str)
     county = request.args.get('county', 'Nairobi', type=str)
     all_categories = Categories.query.all()
     categories = Categories.query.limit(10).all()

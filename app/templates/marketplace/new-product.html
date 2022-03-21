@@ -96,6 +96,13 @@
                 {% endif %}
             </div>
         
+            <div class="col-md-12 mt-20">
+                <p class="policy-text">By clicking Post, you accept the <a class="text-primary" href="{{ url_for('terms_conditions') }}">terms of use</a> 
+                    , confirm that you will abide by the <a class="text-primary" href="{{ url_for('safety_tips') }}">safety
+                        tips</a>
+                    , declare that this post does not include any prohibited items.
+                </p>
+            </div>
         <div class="col-md-12 mt-20">
             {{ form.submit(class="btn btn-lg btn-primary") }}
         </div>
