@@ -1326,6 +1326,27 @@ def add_productcategory():
     db.session.commit()
     return redirect(url_for('admin'))
 
+@app.route('/addnewcounty', methods = ['POST'])
+@login_required
+def add_county():
+    if current_user.admin != True:
+        abort(404)
+    county = request.form.get('county')
+    c = Counties(name=county)
+    db.session.add(c)
+    db.session.commit()
+    return redirect(url_for('admin'))
+
+@app.route('/del_county/<int:id>', methods = ['POST'])
+@login_required
+def del_county(id):
+    if current_user.admin != True:
+        abort(404)
+    c = Counties.query.get_or_404(int(id))
+    db.session.delete(c)
+    db.session.commit()
+    return redirect(url_for('admin'))
+
 @app.route('/del_productcategory/<int:id>', methods = ['POST'])
 @login_required
 def del_productcategory(id):
@@ -1376,8 +1397,9 @@ def admin():
     users = Users.query.paginate()
     categories = Categories.query.paginate()
     jobs = Jobs.query.paginate()
+    counties = Counties.query.paginate()
     products = Products.query.paginate()
     marketplace_cat = Productcategories.query.paginate()
 
     return render_template('admin/index.html', users=users,categories=categories,
-    marketplace_cat=marketplace_cat, jobs=jobs,products=products)
+    marketplace_cat=marketplace_cat, jobs=jobs,products=products,counties=counties)
