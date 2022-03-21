@@ -1403,14 +1403,84 @@ def add_category():
     if current_user.admin != True:
         abort(404)
     category = request.form.get('category')
+    c = Categories(categoryname=category)
+    db.session.add(c)
+    db.session.commit()
+    return redirect(url_for('admin'))
+
+@app.route('/del_category/<int:id>', methods = ['POST'])
+@login_required
+def del_category(id):
+    if current_user.admin != True:
+        abort(404)
+    c = Categories.query.get_or_404(int(id))
+    db.session.delete(c)
+    db.session.commit()
+    return redirect(url_for('admin'))
+
+@app.route('/addnewcategory', methods = ['POST'])
+@login_required
+def add_productcategory():
+    if current_user.admin != True:
+        abort(404)
+    category = request.form.get('category')
     c = Productcategories(productcategoryname=category)
     db.session.add(c)
     db.session.commit()
-    return redirect(url_for('market_place'))
+    return redirect(url_for('admin'))
+
+@app.route('/del_productcategory/<int:id>', methods = ['POST'])
+@login_required
+def del_productcategory(id):
+    if current_user.admin != True:
+        abort(404)
+    c = Productcategories.query.get_or_404(int(id))
+    db.session.delete(c)
+    db.session.commit()
+    return redirect(url_for('admin'))
+
+@app.route('/del_user/<int:id>', methods = ['POST'])
+@login_required
+def del_user(id):
+    if current_user.admin != True:
+        abort(404)
+    u = Users.query.get_or_404(int(id))
+    db.session.delete(u)
+    db.session.commit()
+    return redirect(url_for('admin'))
+
+@app.route('/del_job/<int:id>', methods = ['POST'])
+@login_required
+def del_job(id):
+    if current_user.admin != True:
+        abort(404)
+    j = Jobs.query.get_or_404(int(id))
+    db.session.delete(j)
+    db.session.commit()
+    return redirect(url_for('admin'))
+
+
+@app.route('/del_product/<int:id>', methods = ['POST'])
+@login_required
+def del_product(id):
+    if current_user.admin != True:
+        abort(404)
+    p = Products.query.get_or_404(int(id))
+    db.session.delete(p)
+    db.session.commit()
+    return redirect(url_for('admin'))
+
 
 @app.route('/admin')
+@login_required
 def admin():
     if current_user.admin != True:
         abort(404)
     users = Users.query.paginate()
-    return render_template('admin/index.html', users=users)
+    categories = Categories.query.paginate()
+    jobs = Jobs.query.paginate()
+    products = Products.query.paginate()
+    marketplace_cat = Productcategories.query.paginate()
+
+    return render_template('admin/index.html', users=users,categories=categories,
+    marketplace_cat=marketplace_cat, jobs=jobs,products=products)
