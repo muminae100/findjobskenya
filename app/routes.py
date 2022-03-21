@@ -226,9 +226,9 @@ def send_alert_email(job, alert):
     {url_for('unsubscribe_job',id=alert.id,_external = True)}
 
     Our terms of use
-    {url_for('terms_conditions')}
+    {url_for('terms_conditions',_external = True)}
     Privacy policy
-    {url_for('privacy_policy')}
+    {url_for('privacy_policy',_external = True)}
 
 '''
     mail.send(msg)
@@ -1243,19 +1243,21 @@ def saved_products():
 
 # unsubscribe emails
 @app.route('/unsubscribe_jobalert/<int:id>')
+@login_required
 def unsubscribe_job(id):
     alert = Jobalerts.query.get_or_404(int(id))
     db.session.delete(alert)
     db.session.commit()
-    flash('You have successfully unsubscribed from job alert')
+    flash('You have successfully unsubscribed from job alert','success')
     return redirect(url_for('index'))
 
 @app.route('/unsubscribe_productalert/<int:id>')
+@login_required
 def unsubscribe_product(id):
     alert = Productalerts.query.get_or_404(int(id))
     db.session.delete(alert)
     db.session.commit()
-    flash('You have successfully unsubscribed from product/service alert')
+    flash('You have successfully unsubscribed from product/service alert', 'success')
     return redirect(url_for('market_place'))
 
 
