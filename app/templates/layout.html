@@ -82,18 +82,18 @@
                         <p class="sticky" style="color: purple;">ForeverKenyan</p>
                     </a>
                     {% if current_user.is_authenticated %}
-                    <div class="collapsed-items" class="navbar-brand sticky_logo float-right">
+                    <div class="collapsed-items" class="float-right">
                         {% if length > 0 %}
-                        <a href="{{ url_for('notifications') }}" class="notification">
+                        <a href="{{ url_for('notifications') }}" class="notification navbar-brand">
                             <span><i style="font-size: 25px;" class="fa fa-bell text-secondary"></i></span>
                             <span class="badge">{{ length }}</span>
                         </a>
                         {% else %}
-                        <a href="{{ url_for('notifications') }}" class="notification">
+                        <a href="{{ url_for('notifications') }}" class="notification navbar-brand">
                             <span><i style="font-size: 25px;" class="fa fa-bell text-secondary"></i></span>
                         </a>
                         {% endif %}
-                        <img class="rounded-circle ml-3" width="35" height="35" src="{{ url_for('static', filename = 'img/profile-imgs/') }}{{ current_user.profile_pic }}">
+                        <img class="rounded-circle ml-3 navbar-brand" width="35" height="35" src="{{ url_for('static', filename = 'img/profile-imgs/') }}{{ current_user.profile_pic }}">
                     </div>
                     <button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse"
                         data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
