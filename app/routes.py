@@ -858,11 +858,16 @@ def job_alerts():
     l = Counties.query.filter_by(name=county).first_or_404()
     email = current_user.email
 
+    a = Jobalerts.query.filter_by(email=email).filter_by(schedule=s.schedulename).filter_by(category=c.categoryname).filter_by(county=l.name).first()
+    if a:
+       flash(f'This alert has already been created', 'danger') 
+       return redirect(url_for('index'))
+
     alert = Jobalerts(email=email, category=c.categoryname, schedule=s.schedulename,county=l.name)
     db.session.add(alert)
     db.session.commit()
 
-    flash(f'You job alert has been set successfully', 'secondary')
+    flash(f'You job alert has been set successfully', 'success')
 
     return redirect(url_for('index'))
 
@@ -1030,6 +1035,11 @@ def product_alert():
     c = Productcategories.query.filter_by(productcategoryname=category).first_or_404()
     l = Counties.query.filter_by(name=county).first_or_404()
     email = current_user.email
+
+    a = Productalerts.query.filter_by(email=email).filter_by(category=c.productcategoryname).filter_by(county=l.name).first()
+    if a:
+       flash(f'This alert has already been created', 'danger') 
+       return redirect(url_for('market_place'))
 
     alert = Productalerts(email=email, category=c.productcategoryname,county=l.name)
     db.session.add(alert)
