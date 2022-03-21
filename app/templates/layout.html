@@ -93,7 +93,9 @@
                             <span><i style="font-size: 25px;" class="fa fa-bell text-secondary"></i></span>
                         </a>
                         {% endif %}
-                        <img class="rounded-circle ml-3 navbar-brand" width="35" height="35" src="{{ url_for('static', filename = 'img/profile-imgs/') }}{{ current_user.profile_pic }}">
+                        <a class="navbar-brand" href="#">
+                        <img class="rounded-circle ml-3" width="35" height="35" src="{{ url_for('static', filename = 'img/profile-imgs/') }}{{ current_user.profile_pic }}">
+                        </a>
                     </div>
                     <button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse"
                         data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
