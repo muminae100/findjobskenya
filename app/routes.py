@@ -168,10 +168,10 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 
-def send_alert_email(job, email):
+def send_alert_email(job, alert):
     msg = Message(f'{job.title}', 
                    sender='smuminaetx100@gmail.com',
-                   recipients=[email])
+                   recipients=[alert.email])
     msg.body = f'''
     A new job has been posted:
 
@@ -222,7 +222,7 @@ def send_alert_email(job, email):
     {url_for('job',id=job.id,_external = True)}
 
     Click the link below to unsubscribe from this job alert
-    {url_for('unsubscribe_job',_external = True)}
+    {url_for('unsubscribe_job',id=alert.id,_external = True)}
 
 '''
     mail.send(msg)
@@ -249,7 +249,7 @@ def check_alerts(j):
     alerts = Jobalerts.query.filter_by(category=j.category.categoryname).filter_by(county=j.location.name).filter_by(schedule=j.schedule.schedulename).all()
     if alerts:
         for alert in alerts:
-            send_alert_email(j, alert.email)
+            send_alert_email(j, alert)
             send_notification(j, alert.email)
 
 
@@ -946,10 +946,10 @@ def market_place():
     total_categories=total_categories,all_categories=all_categories)
 
 
-def send_product_alert_email(product, email):
+def send_product_alert_email(product, alert):
     msg = Message(f'{product.title}', 
                    sender='smuminaetx100@gmail.com',
-                   recipients=[email])
+                   recipients=[alert.email])
     msg.body = f'''
     A new product/service has been posted:
 
@@ -979,6 +979,9 @@ def send_product_alert_email(product, email):
     You can view the product/service in our website using the link below:
     {url_for('product',id=product.id,_external = True)}
 
+    Click the link below to unsubscribe from this alert
+    {url_for('unsubscribe_product',id=alert.id,_external = True)}
+
 '''
     mail.send(msg)
 
@@ -1001,7 +1004,7 @@ def check_product_alerts(p):
     alerts = Productalerts.query.filter_by(category=p.product_category.productcategoryname).filter_by(county=p.product_location.name).all()
     if alerts:
         for alert in alerts:
-            send_product_alert_email(p, alert.email)
+            send_product_alert_email(p, alert)
             send_product_notification(p, alert.email)
 
 
@@ -1225,25 +1228,24 @@ def saved_products():
     return render_template('marketplace/saved-products.html', products=products, length=length)
 
 # unsubscribe emails
-@app.route('/unsubscribe')
-def unsubscribe():
-    return render_template('unsubscribe.html')
-
-
-@app.route('/unsubscribe_jobalert', methods=['POST'])
-def unsubscribe_job():
-    email = request.form.get('email')
-    category = request.form.get('category')
-    county = request.form.get('county')
-    schedule = request.form.get('schedule')
-    alert = Jobalerts.query.filter_by(email=email).filter_by(category=category)\
-        .filter_by(county=county).filter_by(schedule=schedule).first_or_404()
+@app.route('/unsubscribe_jobalert/<int:id>')
+def unsubscribe_job(id):
+    alert = Jobalerts.query.get_or_404(int(id))
     db.session.delete(alert)
     db.session.commit()
     flash('You have successfully unsubscribed from job alert')
     return redirect(url_for('index'))
 
+@app.route('/unsubscribe_productalert/<int:id>')
+def unsubscribe_product(id):
+    alert = Productalerts.query.get_or_404(int(id))
+    db.session.delete(alert)
+    db.session.commit()
+    flash('You have successfully unsubscribed from product/service alert')
+    return redirect(url_for('market_place'))
 
+
+#handling errors
 @app.errorhandler(404)
 def page_not_found(e):
     length = 0
