@@ -78,7 +78,7 @@ class PostProductForm(FlaskForm):
     category = SelectField(u'Category', choices=[], validators=[DataRequired()])
     location = SelectField(u'Location', choices=[], validators=[DataRequired()])
     additionaldetails = StringField('Additional details(Optional)')
-    price = StringField('Price(number only e.g 10,000)', validators=[DataRequired()])
+    price = StringField('Price e.g Kshs. 1,000)', validators=[DataRequired()])
     submit = SubmitField('Next')
 
 class ProposalForm(FlaskForm):

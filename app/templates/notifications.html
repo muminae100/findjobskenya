@@ -31,7 +31,7 @@
                     <h3 class="p-3 bg-primary text-light">Unread notifications</h3>
                     {% for notification in notifications %}           
                     <pre>
-                        {{ notification.message }}
+                        {{ notification.message | safe }}
                     </pre>        
                     {% endfor %}
                     </div>
