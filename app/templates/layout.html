@@ -39,6 +39,10 @@
         page = page.length ? page : '1';
         $(".active-page").text(page);
 
+        $(".job-page").click(function(e){
+            window.location.href = '/' + '?schedule='+ $('input[name="schedule"]:checked').val() + '&category=' + $('#active-category').text() + '&county=' + $('#locationSelect').find(":selected").text() + '&page=' + $(this).text();
+          });
+
           $(".radiobtns").change(function(e){
             window.location.href = '/' + '?schedule=' + $(this).val() + '&category=' + $('#active-category').text() + '&county=' + $('#locationSelect').find(":selected").text() + '&page=' + page;
           });
@@ -54,6 +58,9 @@
           });
           $('.categoryBtn1').click(function(){
             window.location.href = '/marketplace' + '?category=' + $(this).text() + '&county=' + $('#locationSelection').find(":selected").text() + '&page=' + page;
+          });
+          $('.product-page').click(function(){
+            window.location.href = '/marketplace' + '?category=' + $('#active-category').text() + '&county=' + $('#locationSelection').find(":selected").text() + '&page=' + $(this).text();
           });
         });
     </script>
@@ -85,12 +92,12 @@
                     <div class="collapsed-items">
                         {% if length > 0 %}
                         <a href="{{ url_for('notifications') }}" class="notification navbar-brand">
-                            <span><i style="font-size: 25px;" class="fa fa-bell text-secondary"></i></span>
+                            <span><i class="fa fa-bell text-secondary"></i></span>
                             <span class="badge">{{ length }}</span>
                         </a>
                         {% else %}
                         <a href="{{ url_for('notifications') }}" class="notification navbar-brand">
-                            <span><i style="font-size: 25px;" class="fa fa-bell text-secondary"></i></span>
+                            <span><i class="fa fa-bell text-secondary"></i></span>
                         </a>
                         {% endif %}
                         <a class="navbar-brand" href="#">

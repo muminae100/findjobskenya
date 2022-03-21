@@ -182,9 +182,9 @@
                             {% for page_num in products.iter_pages(left_edge=1,right_edge=1,left_current=1,right_current=2) %}
                                 {% if page_num %}
                                     {% if products.page == page_num %}
-                                    <button class="btn btn-primary mb-2 mt-3 active-page">{{ page_num }}</button>
+                                    <button class="btn btn-primary mb-2 mt-3 active-page product-page">{{ page_num }}</button>
                                     {% else %}
-                                    <button class="btn btn-outline-primary mb-2 mt-3">{{ page_num }}</button>
+                                    <button class="btn btn-outline-primary mb-2 mt-3 product-page">{{ page_num }}</button>
                                     {% endif %}
                                 {% else %}
                                     ...
