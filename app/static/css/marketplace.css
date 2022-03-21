@@ -21,15 +21,14 @@
   @media screen and (max-width:600px) {
       .product-card{
           width: 100%;
+          object-fit: contain;
       }
   }
   
-  /* On mouse-over, add a deeper shadow */
   .product-card:hover {
     box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
   }
   
-  /* Add some padding inside the card container */
   .product-container {
     padding: 2px 16px;
   }
@@ -41,13 +40,11 @@
     vertical-align: middle;
   }
   
-  /* Position the image container (needed to position the left and right arrows) */
   .slideshowcontainer {
     position: relative;
     max-width: 600px;
   }
   
-  /* Hide the images by default */
   .mySlides {
     display: none;
     max-width: 600px;
@@ -64,8 +61,7 @@
       height: auto;
     }
   }
-  
-  /* Next & previous buttons */
+
   .prev,
   .next {
     cursor: pointer;
@@ -82,13 +78,12 @@
     -webkit-user-select: none;
   }
   
-  /* Position the "next button" to the right */
   .next {
     right: 0;
     border-radius: 3px 0 0 3px;
   }
   
-  /* On hover, add a black background color with a little bit see-through */
+
   .prev:hover,
   .next:hover {
     background-color: rgba(0, 0, 0, 0.8);

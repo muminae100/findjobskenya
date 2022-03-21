@@ -226,9 +226,9 @@ def send_alert_email(job, alert):
     {url_for('unsubscribe_job',id=alert.id,_external = True)}
 
     Our terms of use
-    {url_for('terms_conditions')}
+    {url_for('terms_conditions',_external = True)}
     Privacy policy
-    {url_for('privacy_policy')}
+    {url_for('privacy_policy',_external = True)}
 
 '''
     mail.send(msg)
@@ -858,11 +858,16 @@ def job_alerts():
     l = Counties.query.filter_by(name=county).first_or_404()
     email = current_user.email
 
+    a = Jobalerts.query.filter_by(email=email).filter_by(schedule=s.schedulename).filter_by(category=c.categoryname).filter_by(county=l.name).first()
+    if a:
+       flash(f'This alert has already been created', 'danger') 
+       return redirect(url_for('index'))
+
     alert = Jobalerts(email=email, category=c.categoryname, schedule=s.schedulename,county=l.name)
     db.session.add(alert)
     db.session.commit()
 
-    flash(f'You job alert has been set successfully', 'secondary')
+    flash(f'You job alert has been set successfully', 'success')
 
     return redirect(url_for('index'))
 
@@ -1030,6 +1035,11 @@ def product_alert():
     c = Productcategories.query.filter_by(productcategoryname=category).first_or_404()
     l = Counties.query.filter_by(name=county).first_or_404()
     email = current_user.email
+
+    a = Productalerts.query.filter_by(email=email).filter_by(category=c.productcategoryname).filter_by(county=l.name).first()
+    if a:
+       flash(f'This alert has already been created', 'danger') 
+       return redirect(url_for('market_place'))
 
     alert = Productalerts(email=email, category=c.productcategoryname,county=l.name)
     db.session.add(alert)
@@ -1243,19 +1253,21 @@ def saved_products():
 
 # unsubscribe emails
 @app.route('/unsubscribe_jobalert/<int:id>')
+@login_required
 def unsubscribe_job(id):
     alert = Jobalerts.query.get_or_404(int(id))
     db.session.delete(alert)
     db.session.commit()
-    flash('You have successfully unsubscribed from job alert')
+    flash('You have successfully unsubscribed from job alert','success')
     return redirect(url_for('index'))
 
 @app.route('/unsubscribe_productalert/<int:id>')
+@login_required
 def unsubscribe_product(id):
     alert = Productalerts.query.get_or_404(int(id))
     db.session.delete(alert)
     db.session.commit()
-    flash('You have successfully unsubscribed from product/service alert')
+    flash('You have successfully unsubscribed from product/service alert', 'success')
     return redirect(url_for('market_place'))
 
 
