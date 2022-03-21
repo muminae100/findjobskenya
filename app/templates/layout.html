@@ -66,7 +66,7 @@
             <div class="round_spinner">
                 <div class="spinner"></div>
                 <div class="text">
-                    <h3 style="color: purple;" class="sticky">ForeverKenyan</h3>
+                    <p style="color: purple;" class="sticky">ForeverKenyan</p>
                 </div>
             </div>
             <h2 class="head">Find work and best products and services in Kenya.</h2>
@@ -77,9 +77,13 @@
         <div class="header-menu header-menu-4" id="sticky">
             <nav class="navbar navbar-expand-lg ">
                 <div class="container">
-                    <a class="navbar-brand sticky_logo" href="{{ url_for('index') }}">
+                    <a class="navbar-brand sticky_logo big_logo" href="{{ url_for('index') }}">
                         <h3 class="main" style="color: white;">ForeverKenyan</h3>
                         <h3 class="sticky" style="color: purple;">ForeverKenyan</h3>
+                    </a>
+                    <a id="my_logo" style="display: none;" class="navbar-brand sticky_logo" href="{{ url_for('index') }}">
+                        <p class="main" style="color: white;font-size: 15px;font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;">ForeverKenyan</p>
+                        <p class="sticky" style="color: purple;">ForeverKenyan</p>
                     </a>
                     {% if current_user.is_authenticated %}
                     <div class="collapsed-items" class="navbar-brand sticky_logo float-right">

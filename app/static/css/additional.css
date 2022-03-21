@@ -135,6 +135,9 @@ margin-left: 1px;
 .collapsed-items{
   display: none;
 }
+#my_logo{
+  display: none;
+}
 
 @media screen and (max-width:991px) {
   #profile-img{
@@ -145,6 +148,12 @@ margin-left: 1px;
   }
   .collapsed-items{
     display: inline;
+  }
+  #my_logo{
+    display: inline;
+  }
+  #big_logo{
+    display: none;
   }
 }
 body{
