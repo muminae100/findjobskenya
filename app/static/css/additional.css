@@ -146,6 +146,9 @@ margin-left: 1px;
   .collapsed-items{
     display: inline;
   }
+  .notification .badge{
+    top: -3px;
+  }
 }
 body{
   overflow-x: hidden;
