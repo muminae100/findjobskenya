@@ -11,8 +11,8 @@ from app.forms import (RegistrationForm,LoginForm,UpdateAccountForm,
 PostJobForm,RequestResetForm,ResetPasswordForm,ProposalForm, PostProductForm)
 from flask_mail import Message
 from werkzeug.utils import secure_filename
-UPLOAD_FOLDER = 'https://findjobskenya.herokuapp.com/static/proposals/doc_uploads/'
-PRODUCTS_IMAGES_FOLDER = 'https://findjobskenya.herokuapp.com/static/img/marketplace/'
+UPLOAD_FOLDER = os.path.join(app.root_path, 'static/proposals/doc_uploads')
+PRODUCTS_IMAGES_FOLDER = os.path.join(app.root_path, 'static/img/marketplace')
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
