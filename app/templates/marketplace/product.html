@@ -135,6 +135,9 @@
                         <div class="bg-light pr-3 mt-3">
                             <i class="fa fa-camera mr-1"></i>{{ length_of_imgs }} image(s)
                         </div>
+                        <div class="pr-3 mt-3">
+                            <a class="text-primary" href="{{ url_for('addproductimgs', id=product.id) }}">Add images</a>
+                        </div>
                         <div class="mt-5">
                             {% if product.owner == current_user %}
                             <a class="btn btn-primary" href="{{ url_for('productupdate', id=product.id) }}">Update product</a>
