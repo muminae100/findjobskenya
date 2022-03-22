@@ -170,7 +170,7 @@ def logout():
 
 def send_alert_email(job, alert):
     msg = Message(f'{job.title}', 
-                   sender='smuminaetx100@gmail.com',
+                   sender= os.environ.get('EMAIL_SENDER'),
                    recipients=[alert.email])
     msg.body = f'''
     A new job has been posted:
@@ -398,7 +398,7 @@ def author_jobs(username):
 def send_reset_email(user):
     token = user.get_reset_token()
     msg = Message('Password Reset Request', 
-                   sender='smuminaetx100@gmail.com',
+                   sender= os.environ.get('EMAIL_SENDER'),
                    recipients=[user.email])
     msg.body = f'''
     To reset your password, click the link below:
@@ -545,7 +545,7 @@ def saved_jobs():
 
 def send_email_applicant(proposal, job, m):
     msg = Message(f'You have received a reply from {job.author.username}', 
-                   sender= f'smuminaetx100@gmail.com',
+                   sender= os.environ.get('EMAIL_SENDER'),
                    recipients=[proposal.job_seeker.email])
     msg.body = f'''
     Message:
@@ -579,7 +579,7 @@ def send_notification_applicant(p,j):
 
 def send_email_recruiter(proposal, job):
     msg = Message(f'You have received a new job proposal from {proposal.job_seeker.username}', 
-                   sender= 'smuminaetx100@gmail.com',
+                   sender= os.environ.get('EMAIL_SENDER'),
                    recipients=[job.author.email])
     msg.body = f'''
     Applicant information:
@@ -664,7 +664,7 @@ def my_proposals():
 
 def send_doc_recruiter(proposal, job, doc):
     msg = Message(f'{proposal.job_seeker.username} has uploaded a new document to add on to his/her job application', 
-                   sender= 'smuminaetx100@gmail.com',
+                   sender= os.environ.get('EMAIL_SENDER'),
                    recipients=[job.author.email])
     msg.body = f'''
     Document uploaded: 
@@ -955,7 +955,7 @@ def market_place():
 
 def send_product_alert_email(product, alert):
     msg = Message(f'{product.title}', 
-                   sender='smuminaetx100@gmail.com',
+                   sender= os.environ.get('EMAIL_SENDER'),
                    recipients=[alert.email])
     msg.body = f'''
     A new product/service has been posted:
